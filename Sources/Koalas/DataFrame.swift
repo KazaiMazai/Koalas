@@ -35,7 +35,7 @@ public extension DataFrame {
     }
 }
 
-func + <Key, T: Numeric>(lhs: DataFrame<Key,T>,
+public func + <Key, T: Numeric>(lhs: DataFrame<Key,T>,
                          rhs: DataFrame<Key,T>) -> DataFrame<Key,T> {
 
     assert(Set(lhs.keys) == Set(rhs.keys), "DataFrame keys mismatch")
@@ -48,7 +48,7 @@ func + <Key, T: Numeric>(lhs: DataFrame<Key,T>,
     return res
 }
 
-func - <Key, T: Numeric>(lhs: DataFrame<Key,T>,
+public func - <Key, T: Numeric>(lhs: DataFrame<Key,T>,
                          rhs: DataFrame<Key,T>) -> DataFrame<Key,T> {
 
     assert(Set(lhs.keys) == Set(rhs.keys), "DataFrame keys mismatch")
@@ -61,7 +61,7 @@ func - <Key, T: Numeric>(lhs: DataFrame<Key,T>,
     return res
 }
 
-func * <Key, T: Numeric>(lhs: DataFrame<Key,T>,
+public func * <Key, T: Numeric>(lhs: DataFrame<Key,T>,
                          rhs: DataFrame<Key,T>) -> DataFrame<Key,T> {
 
     assert(Set(lhs.keys) == Set(rhs.keys), "DataFrame keys mismatch")
@@ -74,7 +74,7 @@ func * <Key, T: Numeric>(lhs: DataFrame<Key,T>,
     return res
 }
 
-func / <Key, T: FloatingPoint>(lhs: DataFrame<Key,T>,
+public func / <Key, T: FloatingPoint>(lhs: DataFrame<Key,T>,
                                rhs: DataFrame<Key,T>) -> DataFrame<Key,T> {
 
     assert(Set(lhs.keys) == Set(rhs.keys), "DataFrame keys mismatch")
