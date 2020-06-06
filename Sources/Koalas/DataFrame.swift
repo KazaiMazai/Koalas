@@ -35,6 +35,27 @@ public extension DataFrame {
     }
 }
 
+
+public func + <Key, T>(lhs: DataFrame<Key,T>?,
+                                rhs: DataFrame<Key,T>?) -> DataFrame<Key,T>? where T: Numeric {
+    compactMapValues(lhs: lhs, rhs: rhs) { $0 + $1 }
+}
+
+public func - <Key, T>(lhs: DataFrame<Key,T>?,
+                                rhs: DataFrame<Key,T>?) -> DataFrame<Key,T>? where T: Numeric {
+    compactMapValues(lhs: lhs, rhs: rhs) { $0 - $1 }
+}
+
+public func * <Key, T>(lhs: DataFrame<Key,T>?,
+                                rhs: DataFrame<Key,T>?) -> DataFrame<Key,T>? where T: Numeric {
+    compactMapValues(lhs: lhs, rhs: rhs) { $0 * $1 }
+}
+
+public func / <Key, T>(lhs: DataFrame<Key,T>?,
+                       rhs: DataFrame<Key,T>?) -> DataFrame<Key,T>?  where T: FloatingPoint {
+    compactMapValues(lhs: lhs, rhs: rhs) { $0 / $1 }
+}
+
 public func + <Key, T: Numeric>(lhs: DataFrame<Key,T>,
                          rhs: DataFrame<Key,T>) -> DataFrame<Key,T> {
 
