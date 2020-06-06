@@ -25,6 +25,22 @@ public func compactMapValue<T>(value: T?, map: (T) -> T) -> T? {
     return map(value)
 }
 
+public func + <T>(lhs: DataSeries<T>?, rhs: DataSeries<T>?) -> DataSeries<T>?  where T: Numeric {
+    compactMapValues(lhs: lhs, rhs: rhs) { $0 + $1 }
+}
+
+public func - <T>(lhs: DataSeries<T>?, rhs: DataSeries<T>?) -> DataSeries<T>?  where T: Numeric {
+    compactMapValues(lhs: lhs, rhs: rhs) { $0 - $1 }
+}
+
+public func * <T>(lhs: DataSeries<T>?, rhs: DataSeries<T>?) -> DataSeries<T>?  where T: Numeric {
+    compactMapValues(lhs: lhs, rhs: rhs) { $0 * $1 }
+}
+
+public func / <T>(lhs: DataSeries<T>?, rhs: DataSeries<T>?) -> DataSeries<T>?  where T: FloatingPoint {
+    compactMapValues(lhs: lhs, rhs: rhs) { $0 / $1 }
+}
+
 public func + <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>  where T: Numeric {
     assert(lhs.count == rhs.count, "DataSeries length mismatch")
     let res = zip(lhs, rhs).map {
