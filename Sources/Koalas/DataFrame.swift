@@ -10,8 +10,8 @@ import Foundation
 public typealias DataFrame<K: Hashable, V> = Dictionary<K, DataSeries<V>>
 
 public extension DataFrame {
-    func mapToConstant<V, Constant>(value: Constant) -> DataFrame<Key, Constant> where Value == DataSeries<V> {
-        return mapValues {  $0.mapToConstant(value: value)  }
+    func mapTo<V, Constant>(constant value: Constant) -> DataFrame<Key, Constant> where Value == DataSeries<V> {
+        return mapValues {  $0.mapTo(constant: value)  }
     }
 
     func shiftedBy<V>(_ amount: Int) -> DataFrame<Key, V> where Value == DataSeries<V> {

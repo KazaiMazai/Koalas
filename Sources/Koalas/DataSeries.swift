@@ -90,7 +90,7 @@ public func / <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>?  whe
 }
 
 public extension SeriesArray {
-    func mapToConstant<T>(value: T) -> DataSeries<T> {
+    func mapTo<T>(constant value: T) -> DataSeries<T> {
         return DataSeries(repeating: value, count: self.count)
     }
 
