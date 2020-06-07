@@ -9,7 +9,7 @@ import Foundation
 
 public typealias DataSeries<T> = SeriesArray<T?>
 
-public func compactMapValues<T>(lhs: T?, rhs: T?, map: (T, T) -> T) -> T? {
+public func compactMapValues<T>(lhs: T?, rhs: T?, map: (T, T) -> T?) -> T? {
     guard let lhs = lhs, let rhs = rhs else {
         return nil
     }
@@ -41,8 +41,11 @@ public func / <T>(lhs: DataSeries<T>?, rhs: DataSeries<T>?) -> DataSeries<T>?  w
     compactMapValues(lhs: lhs, rhs: rhs) { $0 / $1 }
 }
 
-public func + <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>  where T: Numeric {
-    assert(lhs.count == rhs.count, "DataSeries length mismatch")
+public func + <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>?  where T: Numeric {
+    guard lhs.count == rhs.count else {
+        return nil
+    }
+
     let res = zip(lhs, rhs).map {
         compactMapValues(lhs: $0.0, rhs: $0.1) { $0 + $1 }
     }
@@ -50,8 +53,11 @@ public func + <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>  wher
     return DataSeries(res)
 }
 
-public func - <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>  where T: Numeric {
-    assert(lhs.count == rhs.count, "DataSeries length mismatch")
+public func - <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>?  where T: Numeric {
+    guard lhs.count == rhs.count else {
+        return nil
+    }
+
     let res = zip(lhs, rhs).map {
         compactMapValues(lhs: $0.0, rhs: $0.1) { $0 - $1 }
     }
@@ -59,8 +65,11 @@ public func - <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>  wher
     return DataSeries(res)
 }
 
-public func * <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>  where T: Numeric {
-    assert(lhs.count == rhs.count, "DataSeries length mismatch")
+public func * <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>?  where T: Numeric {
+    guard lhs.count == rhs.count else {
+        return nil
+    }
+
     let res = zip(lhs, rhs).map {
         compactMapValues(lhs: $0.0, rhs: $0.1) { $0 * $1 }
     }
@@ -68,8 +77,11 @@ public func * <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>  wher
     return DataSeries(res)
 }
 
-public func / <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>  where T: FloatingPoint {
-    assert(lhs.count == rhs.count, "DataSeries length mismatch")
+public func / <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>?  where T: FloatingPoint {
+    guard lhs.count == rhs.count else {
+        return nil
+    }
+    
     let res = zip(lhs, rhs).map {
         compactMapValues(lhs: $0.0, rhs: $0.1) { $0 / $1 }
     }
@@ -78,13 +90,13 @@ public func / <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>  wher
 }
 
 public extension SeriesArray {
-    func mapToConstant<T>(value: T) -> DataSeries<T> {
+    func mapTo<T>(constant value: T) -> DataSeries<T> {
         return DataSeries(repeating: value, count: self.count)
     }
 
-    func shiftedBy<T>(_ amount: Int) -> DataSeries<T> where Element == T?  {
-        let shift = abs(amount)
-        guard amount > 0  else {
+    func shiftedBy<T>(_ k: Int) -> DataSeries<T> where Element == T?  {
+        let shift = abs(k)
+        guard k > 0  else {
             var arr = self
             arr.append(contentsOf: DataSeries<T>(repeating: nil, count: shift))
             arr.removeFirst(shift)
