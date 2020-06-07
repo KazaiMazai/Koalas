@@ -20,7 +20,7 @@ final class DataFrameTests: XCTestCase {
          test_whenDFKeysAndSeriesEqual_MemberwiseDiff),
 
         ("test_whenDFKeysAndSeriesEqual_MemberwiseDivision",
-        test_whenDFKeysAndSeriesEqual_MemberwiseDivision)
+         test_whenDFKeysAndSeriesEqual_MemberwiseDivision)
     ]
 
     func test_whenDFKeysAndSeriesEqual_MemberwiseSum() {
@@ -35,7 +35,10 @@ final class DataFrameTests: XCTestCase {
         let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
         let df2 = DataFrame(dictionaryLiteral: ("1", s2), ("2", s1))
 
-        let df3 = df1 + df2
+        guard let df3 = df1 + df2 else {
+            XCTFail("Not equal length")
+            return
+        }
 
         df3.forEach { XCTAssertEqual($0.value.count, s1.count) }
         df3.forEach {
@@ -55,7 +58,10 @@ final class DataFrameTests: XCTestCase {
         let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
         let df2 = DataFrame(dictionaryLiteral: ("1", s2), ("2", s1))
 
-        let df3 = df1 * df2
+        guard let df3 = df1 * df2 else {
+            XCTFail("Not equal length")
+            return
+        }
 
         df3.forEach { XCTAssertEqual($0.value.count, s1.count) }
         df3.forEach {
@@ -75,7 +81,10 @@ final class DataFrameTests: XCTestCase {
         let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s1))
         let df2 = DataFrame(dictionaryLiteral: ("1", s2), ("2", s2))
 
-        let df3 = df1 - df2
+        guard let df3 = df1 - df2 else {
+            XCTFail("Not equal length")
+            return
+        }
 
         df3.forEach { XCTAssertEqual($0.value.count, s1.count) }
         df3.forEach {
@@ -95,7 +104,10 @@ final class DataFrameTests: XCTestCase {
         let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s1))
         let df2 = DataFrame(dictionaryLiteral: ("1", s2), ("2", s2))
 
-        let df3 = df1 / df2
+        guard let df3 = df1 / df2 else {
+            XCTFail("Not equal length")
+            return
+        }
 
         df3.forEach { XCTAssertEqual($0.value.count, s1.count) }
         df3.forEach {

@@ -30,16 +30,16 @@ final class DataSeriesTests: XCTestCase {
          test_whenWindowEqualsSeriesLength_rollingSumLastValueNotNil),
 
         ("test_whenSeriesLengthEqual_MemberwiseSum",
-        test_whenSeriesLengthEqual_MemberwiseSum),
+         test_whenSeriesLengthEqual_MemberwiseSum),
 
         ("test_whenSeriesLengthEqual_MemberwiseDiff",
-        test_whenSeriesLengthEqual_MemberwiseDiff),
+         test_whenSeriesLengthEqual_MemberwiseDiff),
 
         ("test_whenSeriesLengthEqual_MemberwiseProd",
-        test_whenSeriesLengthEqual_MemberwiseProd),
+         test_whenSeriesLengthEqual_MemberwiseProd),
 
         ("test_whenSeriesLengthEqual_MemberwiseDevide",
-        test_whenSeriesLengthEqual_MemberwiseDevide)
+         test_whenSeriesLengthEqual_MemberwiseDevide)
     ]
 
     func test_whenShiftedPositiveByN_NilsInTheBeginningCountsNAndArraysMatch() {
@@ -126,20 +126,25 @@ final class DataSeriesTests: XCTestCase {
         let cumsum1 = s1.cumsum(initial: 0)
         let cumsum2 = s2.cumsum(initial: 0)
 
-        var rollingSum1 = cumsum1 - cumsum2
+        guard var rollingSum1 = cumsum1 - cumsum2 else {
+            XCTFail("Not equal length")
+            return
+        }
         /**when index is less then window size, then nil value in rolling sum
-        */
+         */
         rollingSum1.replaceSubrange(0..<window-1, with: DataSeries(repeating: nil, count: window-1))
 
         let rollingSum2 = s1.rollingScan(initial: nil, window: window) { (w: [Int?]) -> Int? in
             /**when array of values is less then window size, then nil value in rolling sum
-            */
+             */
             guard w.allSatisfy({ $0 != nil }) else {
                 return nil
             }
 
             return w.reduce(0) { $0 + ($1 ?? 0) }
         }
+
+
         XCTAssertEqual(rollingSum1.count, rollingSum2.count)
 
         zip(rollingSum1, rollingSum2).forEach {
@@ -158,7 +163,10 @@ final class DataSeriesTests: XCTestCase {
         let cumsum1 = s1.cumsum(initial: 0)
         let cumsum2 = cumsum1.shiftedBy(window)
 
-        let rollingSum1 = cumsum1 - cumsum2
+        guard let rollingSum1 = cumsum1 - cumsum2 else {
+            XCTFail("Not equal length")
+            return
+        }
 
 
 
@@ -189,7 +197,10 @@ final class DataSeriesTests: XCTestCase {
         let cumsum1 = s1.cumsum(initial: 0)
         var cumsum2 = cumsum1.shiftedBy(window)
         cumsum2[window - 1] = 0 //otherwise rolling sum at this point would be wrong due to nil
-        let rollingSum1 = cumsum1 - cumsum2
+        guard let rollingSum1 = cumsum1 - cumsum2 else {
+            XCTFail("Not equal length")
+            return
+        }
 
         let rollingSum2 = s1.rollingScan(initial: nil, window: window) { (w: [Int?]) -> Int? in
             guard w.allSatisfy({ $0 != nil }) else {
@@ -215,26 +226,32 @@ final class DataSeriesTests: XCTestCase {
         let s1 = DataSeries(arr)
         let s2 = DataSeries(arr)
 
-        let s3 = s1 + s2
+        guard let s3 = s1 + s2 else {
+            XCTFail("Not equal length")
+            return
+        }
 
         XCTAssertEqual(s3.count, s1.count)
         s3.enumerated().forEach { XCTAssertEqual($0.element!, s2[$0.offset]! + s1[$0.offset]!)  }
     }
 
     func test_whenSeriesLengthEqual_MemberwiseDiff() {
-           let first: Int = 1
-           let last: Int = 20
+        let first: Int = 1
+        let last: Int = 20
 
-           let arr = Array(first...last)
+        let arr = Array(first...last)
 
-           let s1 = DataSeries(arr)
-           let s2 = DataSeries(arr)
+        let s1 = DataSeries(arr)
+        let s2 = DataSeries(arr)
 
-           let s3 = s1 - s2
+        guard let s3 = s1 - s2 else {
+            XCTFail("Not equal length")
+            return
+        }
 
-           XCTAssertEqual(s3.count, s1.count)
-           s3.enumerated().forEach { XCTAssertEqual($0.element!, s2[$0.offset]! - s1[$0.offset]!)  }
-       }
+        XCTAssertEqual(s3.count, s1.count)
+        s3.enumerated().forEach { XCTAssertEqual($0.element!, s2[$0.offset]! - s1[$0.offset]!)  }
+    }
 
     func test_whenSeriesLengthEqual_MemberwiseProd() {
         let first: Int = 1
@@ -245,7 +262,10 @@ final class DataSeriesTests: XCTestCase {
         let s1 = DataSeries(arr)
         let s2 = DataSeries(arr)
 
-        let s3 = s1 * s2
+        guard let s3 = s1 * s2 else {
+            XCTFail("Not equal length")
+            return
+        }
 
         XCTAssertEqual(s3.count, s1.count)
         s3.enumerated().forEach { XCTAssertEqual($0.element!, s2[$0.offset]! * s1[$0.offset]!)  }
@@ -259,7 +279,10 @@ final class DataSeriesTests: XCTestCase {
         let s1 = DataSeries(arr)
         let s2 = DataSeries(arr)
 
-        let s3 = s1 / s2
+        guard let s3 = s1 / s2 else {
+            XCTFail("Not equal length")
+            return
+        }
 
         XCTAssertEqual(s3.count, s1.count)
         s3.enumerated().forEach { XCTAssertEqual($0.element!, s2[$0.offset]! / s1[$0.offset]!)  }
