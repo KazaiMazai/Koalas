@@ -94,9 +94,9 @@ public extension SeriesArray {
         return DataSeries(repeating: value, count: self.count)
     }
 
-    func shiftedBy<T>(_ amount: Int) -> DataSeries<T> where Element == T?  {
-        let shift = abs(amount)
-        guard amount > 0  else {
+    func shiftedBy<T>(_ k: Int) -> DataSeries<T> where Element == T?  {
+        let shift = abs(k)
+        guard k > 0  else {
             var arr = self
             arr.append(contentsOf: DataSeries<T>(repeating: nil, count: shift))
             arr.removeFirst(shift)
