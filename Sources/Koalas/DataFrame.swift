@@ -10,8 +10,8 @@ import Foundation
 public typealias DataFrame<K: Hashable, V> = Dictionary<K, DataSeries<V>>
 
 public extension DataFrame {
-    func mapToConstant<V, Constant>(value: Constant) -> DataFrame<Key, Constant> where Value == DataSeries<V> {
-        return mapValues {  $0.mapToConstant(value: value)  }
+    func mapTo<V, Constant>(constant value: Constant) -> DataFrame<Key, Constant> where Value == DataSeries<V> {
+        return mapValues {  $0.mapTo(constant: value)  }
     }
 
     func shiftedBy<V>(_ amount: Int) -> DataFrame<Key, V> where Value == DataSeries<V> {
@@ -57,9 +57,12 @@ public func / <Key, T>(lhs: DataFrame<Key,T>?,
 }
 
 public func + <Key, T: Numeric>(lhs: DataFrame<Key,T>,
-                         rhs: DataFrame<Key,T>) -> DataFrame<Key,T> {
+                         rhs: DataFrame<Key,T>) -> DataFrame<Key,T>? {
 
-    assert(Set(lhs.keys) == Set(rhs.keys), "DataFrame keys mismatch")
+    guard Set(lhs.keys) == Set(rhs.keys) else {
+        return nil
+    }
+    
     var res = DataFrame<Key,T>()
 
     lhs.forEach {
@@ -70,9 +73,12 @@ public func + <Key, T: Numeric>(lhs: DataFrame<Key,T>,
 }
 
 public func - <Key, T: Numeric>(lhs: DataFrame<Key,T>,
-                         rhs: DataFrame<Key,T>) -> DataFrame<Key,T> {
+                         rhs: DataFrame<Key,T>) -> DataFrame<Key,T>? {
 
-    assert(Set(lhs.keys) == Set(rhs.keys), "DataFrame keys mismatch")
+    guard Set(lhs.keys) == Set(rhs.keys) else {
+        return nil
+    }
+
     var res = DataFrame<Key,T>()
 
     lhs.forEach {
@@ -83,9 +89,12 @@ public func - <Key, T: Numeric>(lhs: DataFrame<Key,T>,
 }
 
 public func * <Key, T: Numeric>(lhs: DataFrame<Key,T>,
-                         rhs: DataFrame<Key,T>) -> DataFrame<Key,T> {
+                         rhs: DataFrame<Key,T>) -> DataFrame<Key,T>? {
 
-    assert(Set(lhs.keys) == Set(rhs.keys), "DataFrame keys mismatch")
+    guard Set(lhs.keys) == Set(rhs.keys) else {
+        return nil
+    }
+
     var res = DataFrame<Key,T>()
 
     lhs.forEach {
@@ -96,9 +105,12 @@ public func * <Key, T: Numeric>(lhs: DataFrame<Key,T>,
 }
 
 public func / <Key, T: FloatingPoint>(lhs: DataFrame<Key,T>,
-                               rhs: DataFrame<Key,T>) -> DataFrame<Key,T> {
+                               rhs: DataFrame<Key,T>) -> DataFrame<Key,T>? {
 
-    assert(Set(lhs.keys) == Set(rhs.keys), "DataFrame keys mismatch")
+    guard Set(lhs.keys) == Set(rhs.keys) else {
+        return nil
+    }
+
     var res = DataFrame<Key,T>()
 
     lhs.forEach {
