@@ -29,6 +29,9 @@ final class DataSeriesTests: XCTestCase {
         ("test_whenWindowEqualsSeriesLength_rollingSumLastValueNotNil",
          test_whenWindowEqualsSeriesLength_rollingSumLastValueNotNil),
 
+        ("test_whenMapToContant_equalLengthAndValueMatch",
+         test_whenMapToContant_equalLengthAndValueMatch),
+
         ("test_whenSeriesLengthEqual_MemberwiseSum",
          test_whenSeriesLengthEqual_MemberwiseSum),
 
@@ -215,6 +218,20 @@ final class DataSeriesTests: XCTestCase {
         zip(rollingSum1, rollingSum2).forEach {
             XCTAssertEqual($0.0, $0.1)
         }
+    }
+
+    func test_whenMapToContant_equalLengthAndValueMatch() {
+        let first: Int = 1
+        let last: Int = 20
+
+        let constant = 1
+        let arr = Array(first...last)
+
+        let s1 = DataSeries(arr)
+        let s2 = s1.mapTo(constant: constant)
+
+        XCTAssertEqual(s2.count, s1.count)
+        s2.forEach { XCTAssertEqual($0, constant) }
     }
 
     func test_whenSeriesLengthEqual_MemberwiseSum() {
