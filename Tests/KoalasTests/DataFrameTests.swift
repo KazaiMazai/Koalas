@@ -20,8 +20,34 @@ final class DataFrameTests: XCTestCase {
          test_whenDFKeysAndSeriesEqual_MemberwiseDiff),
 
         ("test_whenDFKeysAndSeriesEqual_MemberwiseDivision",
-         test_whenDFKeysAndSeriesEqual_MemberwiseDivision)
+         test_whenDFKeysAndSeriesEqual_MemberwiseDivision),
+
+        ("test_whenMapToContant_equalLengthsAndValueMatch",
+         test_whenMapToContant_equalLengthsAndValueMatch)
     ]
+
+    func test_whenMapToContant_equalLengthsAndValueMatch() {
+        let first: Int = 1
+        let last: Int = 20
+
+        let constant = 1
+        let arr = Array(first...last)
+
+        let s1 = DataSeries(arr)
+        let s2 = DataSeries(arr)
+
+        let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
+        let df2 = df1.mapTo(constant: constant)
+
+        df2.forEach {
+            XCTAssertEqual($0.value.count, s1.count)
+
+            $0.value.forEach {
+                XCTAssertEqual($0, constant)
+            }
+
+        }
+    }
 
     func test_whenDFKeysAndSeriesEqual_MemberwiseSum() {
         let first: Int = 1
