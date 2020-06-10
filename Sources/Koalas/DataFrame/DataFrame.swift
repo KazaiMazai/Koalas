@@ -9,6 +9,7 @@ import Foundation
 
 public typealias DataFrame<K: Hashable, V> = Dictionary<K, DataSeries<V>>
 
+
 public extension DataFrame {
     func mapTo<V, Constant>(constant value: Constant) -> DataFrame<Key, Constant> where Value == DataSeries<V> {
         return mapValues {  $0.mapTo(constant: value)  }
