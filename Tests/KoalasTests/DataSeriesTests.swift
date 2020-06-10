@@ -304,4 +304,39 @@ final class DataSeriesTests: XCTestCase {
         XCTAssertEqual(s3.count, s1.count)
         s3.enumerated().forEach { XCTAssertEqual($0.element!, s2[$0.offset]! / s1[$0.offset]!)  }
     }
+
+    func test_whenSeriesLengthEqual_MemberwiseConditionalMap() {
+
+        let s1 = DataSeries(repeating: 1, count: 5)
+        let s2 = DataSeries(repeating: 2, count: 5)
+        let s3 = DataSeries([true, false, true, nil, false])
+
+        guard let result = s3.whereTrue(then: s1, else: s2) else {
+            XCTFail("Not equal length")
+            return
+        }
+
+        result.enumerated().forEach {
+            if let s3Value = s3[$0.offset] {
+
+                if s3Value {
+                    XCTAssertEqual($0.element, s1[$0.offset])
+                } else {
+                    XCTAssertEqual($0.element, s2[$0.offset])
+                }
+            } else {
+                XCTAssertEqual($0.element, nil)
+            }
+
+        }
+    }
+
+    func test_whenSeriesLengthNotEqual_MemberwiseConditionalNilResult() {
+
+        let s1 = DataSeries(repeating: 1, count: 4)
+        let s2 = DataSeries(repeating: 2, count: 5)
+        let s3 = DataSeries([true, false, true, nil, false])
+        let result = s3.whereTrue(then: s1, else: s2)
+        XCTAssertNil(result)
+    }
 }
