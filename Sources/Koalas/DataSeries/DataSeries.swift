@@ -17,6 +17,14 @@ public func compactMapValues<T>(lhs: T?, rhs: T?, map: (T, T) -> T?) -> T? {
     return map(lhs, rhs)
 }
 
+public func compactMapValues<T, U, V, S>(_ t: T?, _ u: U?, _ v: V?, map: (T, U, V) -> S?) -> S? {
+    guard let t = t, let u = u, let v = v else {
+        return nil
+    }
+
+    return map(t, u, v)
+}
+
 public func compactMapValue<T>(value: T?, map: (T) -> T) -> T? {
     guard let value = value else {
         return nil
@@ -99,18 +107,18 @@ public func zipSeries<T1, T2, T3>(s1: SeriesArray<T1>, s2: SeriesArray<T2>, s3: 
     return zip(s1, zip(s2, s3)).map { ($0.0, $0.1.0, $0.1.1) }
 }
 
-public func whereCondition<U>(_ condition: DataSeries<Bool>, then trueSeries: SeriesArray<U>, else series: SeriesArray<U>) -> DataSeries<U>?   {
+public func whereCondition<U>(_ condition: DataSeries<Bool>, then trueSeries: DataSeries<U>, else series: DataSeries<U>) -> DataSeries<U>?   {
     return condition.whereTrue(then: trueSeries, else: series)
 }
 
 public extension SeriesArray  {
-    func whereTrue<U>(then trueSeries: SeriesArray<U>, else series: SeriesArray<U>) -> DataSeries<U>? where Element == Bool?  {
+    func whereTrue<U>(then trueSeries: DataSeries<U>, else series: DataSeries<U>) -> DataSeries<U>? where Element == Bool?  {
         guard let zip3 = zipSeries(s1: self, s2: trueSeries, s3: series) else {
             return nil
         }
 
         let resultArray = zip3.map { zipped in zipped.0.map { $0 ? zipped.1 : zipped.2 } ?? nil }
-        return SeriesArray<U?>(resultArray)
+        return DataSeries<U>(resultArray)
     }
 }
 
