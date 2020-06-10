@@ -53,6 +53,8 @@ public func + <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>?  whe
     return DataSeries(res)
 }
 
+
+
 public func - <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>?  where T: Numeric {
     guard lhs.count == rhs.count else {
         return nil
@@ -87,6 +89,29 @@ public func / <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>?  whe
     }
 
     return DataSeries(res)
+}
+
+public func zipSeries<T1, T2, T3>(s1: SeriesArray<T1>, s2: SeriesArray<T2>, s3: SeriesArray<T3>) -> Array<(T1, T2, T3)>? {
+    guard s1.count == s2.count, s2.count == s3.count else {
+        return nil
+    }
+
+    return zip(s1, zip(s2, s3)).map { ($0.0, $0.1.0, $0.1.1) }
+}
+
+public func whereCondition<U>(_ condition: DataSeries<Bool>, then trueSeries: SeriesArray<U>, else series: SeriesArray<U>) -> DataSeries<U>?   {
+    return condition.whereTrue(then: trueSeries, else: series)
+}
+
+public extension SeriesArray  {
+    func whereTrue<U>(then trueSeries: SeriesArray<U>, else series: SeriesArray<U>) -> DataSeries<U>? where Element == Bool?  {
+        guard let zip3 = zipSeries(s1: self, s2: trueSeries, s3: series) else {
+            return nil
+        }
+
+        let resultArray = zip3.map { zipped in zipped.0.map { $0 ? zipped.1 : zipped.2 } ?? nil }
+        return SeriesArray<U?>(resultArray)
+    }
 }
 
 public extension SeriesArray {
