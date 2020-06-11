@@ -57,7 +57,7 @@ final class DataSeriesTests: XCTestCase {
          test_whenSeriesContainsDoubleAndNoNils_sum),
 
         ("test_whenSeriesContainsNills_sumWithIgnoreNils",
-            test_whenSeriesContainsNills_sumWithIgnoreNils),
+         test_whenSeriesContainsNills_sumWithIgnoreNils),
 
         ("test_whenSeriesContainsNills_sumWithNoIgnoreNilsEqualsNil",
          test_whenSeriesContainsNills_sumWithNoIgnoreNilsEqualsNil),
@@ -69,7 +69,19 @@ final class DataSeriesTests: XCTestCase {
          test_whenSeriesContainsNils_meanWithIgnoreNils),
 
         ("test_whenSeriesContainsNils_meanNoIgnoreNils",
-         test_whenSeriesContainsNils_meanNoIgnoreNils)
+         test_whenSeriesContainsNils_meanNoIgnoreNils),
+
+        ("test_forwardFillNils",
+         test_forwardFillNils),
+
+        ("test_whenFirstNil_forwardFillNilsStartWithInitial",
+         test_whenFirstNil_forwardFillNilsStartWithInitial),
+
+        ("test_backwardFillNils",
+         test_backwardFillNils),
+
+        ("test_whenLastNil_backwardFillNils",
+         test_whenLastNil_backwardFillNils)
     ]
 
     func test_whenShiftedPositiveByN_NilsInTheBeginningCountsNAndArraysMatch() {
@@ -443,5 +455,47 @@ final class DataSeriesTests: XCTestCase {
         arr.append(contentsOf: [0, 0, 0])
 
         XCTAssertEqual(s1.mean(shouldSkipNils: false), arr.reduce(0, +) / Double(arr.count))
+    }
+
+    func test_forwardFillNils() {
+        let arr1 = [1, 2, nil, 3, nil, 4, nil, 5, nil, nil, nil]
+        let expectedArr = [1, 2, 2, 3, 3, 4, 4, 5, 5, 5, 5]
+        let s1 = DataSeries(arr1)
+        let s2 = s1.fillNils(method: .forward(initial: 0))
+
+        XCTAssertEqual(s1.count, s2.count)
+        zip(s2, expectedArr).forEach { XCTAssertEqual($0.0, $0.1) }
+    }
+
+    func test_whenFirstNil_forwardFillNilsStartWithInitial() {
+        let initial = 0
+        let arr1 = [nil, 2, nil, 3, nil, 4, nil, 5, nil, nil, nil]
+        let expectedArr = [initial, 2, 2, 3, 3, 4, 4, 5, 5, 5, 5]
+        let s1 = DataSeries(arr1)
+        let s2 = s1.fillNils(method: .forward(initial: initial))
+
+        XCTAssertEqual(s1.count, s2.count)
+        zip(s2, expectedArr).forEach { XCTAssertEqual($0.0, $0.1) }
+    }
+
+    func test_backwardFillNils() {
+        let arr1 = [1, 2, nil, 3, nil, 4, nil, 5, nil, nil, 6]
+        let expectedArr = [1, 2, 3, 3, 4, 4, 5, 5, 6, 6, 6]
+        let s1 = DataSeries(arr1)
+        let s2 = s1.fillNils(method: .backward(initial: 0))
+
+        XCTAssertEqual(s1.count, s2.count)
+        zip(s2, expectedArr).forEach { XCTAssertEqual($0.0, $0.1) }
+    }
+
+    func test_whenLastNil_backwardFillNils() {
+        let initial = 6
+        let arr1 = [1, 2, nil, 3, nil, 4, nil, 5, nil, nil, nil]
+        let expectedArr = [1, 2, 3, 3, 4, 4, 5, 5, initial, initial, initial]
+        let s1 = DataSeries(arr1)
+        let s2 = s1.fillNils(method: .backward(initial: initial))
+
+        XCTAssertEqual(s1.count, s2.count)
+        zip(s2, expectedArr).forEach { XCTAssertEqual($0.0, $0.1) }
     }
 }

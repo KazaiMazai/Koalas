@@ -127,6 +127,19 @@ public extension SeriesArray {
         return DataSeries(map { $0 ?? value } )
     }
 
+    func fillNils<T>(method: FillNilsMethod<T>) -> DataSeries<T> where Element == T? {
+        switch method {
+        case .all(let value):
+            return fillNils(with: value)
+        case .backward(let initial):
+            let res = DataSeries(reversed()).scan(initial: initial) { ($1 ?? $0) }
+            return DataSeries(res.reversed())
+        case .forward(let initial):
+            let res = scan(initial: initial) { ($1 ?? $0) }
+            return DataSeries(res)
+        }
+    }
+
     func mapTo<T>(constant value: T) -> DataSeries<T> {
         return DataSeries(repeating: value, count: self.count)
     }
