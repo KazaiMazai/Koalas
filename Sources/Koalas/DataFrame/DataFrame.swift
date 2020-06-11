@@ -9,8 +9,11 @@ import Foundation
 
 public typealias DataFrame<K: Hashable, V> = Dictionary<K, DataSeries<V>>
 
-
 public extension DataFrame {
+    func compactMapValues<V, U>(transform: (V?) -> U?) -> DataFrame<Key, U> where Value == DataSeries<V> {
+        mapValues { series in DataSeries(series.map { transform($0) }) }
+    }
+
     func mapTo<V, Constant>(constant value: Constant) -> DataFrame<Key, Constant> where Value == DataSeries<V> {
         return mapValues {  $0.mapTo(constant: value)  }
     }

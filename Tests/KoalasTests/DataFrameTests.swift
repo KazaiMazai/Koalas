@@ -44,7 +44,7 @@ final class DataFrameTests: XCTestCase {
          test_whenDFContainsNils_columnSumNoIgnoreEqualNil),
 
         ("test_forwardFillNils",
-         test_forwardFillNils)
+         test_forwardFillNils),
 
         ("test_backwardFillNils",
          test_backwardFillNils)
