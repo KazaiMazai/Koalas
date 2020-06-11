@@ -57,7 +57,7 @@ final class DataSeriesTests: XCTestCase {
          test_whenSeriesContainsDoubleAndNoNils_sum),
 
         ("test_whenSeriesContainsNills_sumWithIgnoreNils",
-            test_whenSeriesContainsNills_sumWithIgnoreNils),
+         test_whenSeriesContainsNills_sumWithIgnoreNils),
 
         ("test_whenSeriesContainsNills_sumWithNoIgnoreNilsEqualsNil",
          test_whenSeriesContainsNills_sumWithNoIgnoreNilsEqualsNil),
@@ -69,7 +69,19 @@ final class DataSeriesTests: XCTestCase {
          test_whenSeriesContainsNils_meanWithIgnoreNils),
 
         ("test_whenSeriesContainsNils_meanNoIgnoreNils",
-         test_whenSeriesContainsNils_meanNoIgnoreNils)
+         test_whenSeriesContainsNils_meanNoIgnoreNils),
+
+        ("test_forwardFillNils",
+         test_forwardFillNils),
+
+        ("test_whenFirstNil_forwardFillNilsStartWithInitial",
+         test_whenFirstNil_forwardFillNilsStartWithInitial),
+
+        ("test_backwardFillNils",
+         test_backwardFillNils),
+
+        ("test_whenLastNil_backwardFillNils",
+         test_whenLastNil_backwardFillNils)
     ]
 
     func test_whenShiftedPositiveByN_NilsInTheBeginningCountsNAndArraysMatch() {
