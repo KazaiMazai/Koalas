@@ -19,8 +19,8 @@ public extension DataFrame {
         return mapValues { $0.shiftedBy(amount) }
     }
 
-    func cumsum<V>(initial: V) -> DataFrame<Key, V> where Value == DataSeries<V>, V: Numeric {
-        return mapValues { $0.cumsum(initial: initial) }
+    func cumulativeSum<V>(initial: V) -> DataFrame<Key, V> where Value == DataSeries<V>, V: Numeric {
+        return mapValues { $0.cumulativeSum(initial: initial) }
     }
 
     func rollingFunc<V>(initial: V, window: Int, windowFunc: (([V?]) -> V?)) -> DataFrame<Key, V> where Value == DataSeries<V>, V: Numeric  {
@@ -31,8 +31,8 @@ public extension DataFrame {
         return mapValues { $0.rollingSum(window: window) }
     }
 
-    func movingAverage<V>(window: Int) -> DataFrame<Key, V> where Value == DataSeries<V>, V: FloatingPoint  {
-        return mapValues { $0.movingAverage(window: window) }
+    func rollingMean<V>(window: Int) -> DataFrame<Key, V> where Value == DataSeries<V>, V: FloatingPoint  {
+        return mapValues { $0.rollingMean(window: window) }
     }
 }
 

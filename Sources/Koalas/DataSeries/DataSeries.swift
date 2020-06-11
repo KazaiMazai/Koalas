@@ -164,7 +164,7 @@ public extension SeriesArray {
         return DataSeries(res)
     }
 
-    func movingAverage<T>(window: Int) -> DataSeries<T> where Element == T?, T: FloatingPoint {
+    func rollingMean<T>(window: Int) -> DataSeries<T> where Element == T?, T: FloatingPoint {
         let res = rollingScan(initial: nil, window: window) { windowArray in
             guard windowArray.allSatisfy({ $0 != nil }) else {
                 return nil
