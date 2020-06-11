@@ -123,6 +123,10 @@ public extension SeriesArray  {
 }
 
 public extension SeriesArray {
+    func fillNils<T>(with value: T) -> DataSeries<T> where Element == T? {
+        return DataSeries(map { $0 ?? value } )
+    }
+
     func mapTo<T>(constant value: T) -> DataSeries<T> {
         return DataSeries(repeating: value, count: self.count)
     }
@@ -142,7 +146,49 @@ public extension SeriesArray {
         return arr
     }
 
-    func cumsum<T>(initial: T) -> DataSeries<T> where Element == T?, T: Numeric {
+    func sum<T>(ignoreNils: Bool = true) -> T? where Element == T?, T: Numeric {
+        let nonNils = filter { $0 != nil }
+        guard ignoreNils || nonNils.count == count else {
+            return nil
+        }
+
+        return nonNils.map { $0 ?? 0 }.reduce(0, +)
+    }
+
+    func mean<T>(shouldSkipNils: Bool = true) -> T? where Element == T?, T: FloatingPoint {
+        let nonNils = shouldSkipNils ?
+            DataSeries(self.filter { $0 != nil }) :
+            self.fillNils(with: 0)
+
+        guard nonNils.count > 0 else {
+            return nil
+        }
+
+        let sum = nonNils.map { $0 ?? 0 }.reduce(0, +)
+
+        return sum / T(nonNils.count)
+    }
+
+    func std<T>(shouldSkipNils: Bool = true) -> T? where Element == T?, T: FloatingPoint {
+        let nonNils = shouldSkipNils ?
+            DataSeries(self.filter { $0 != nil }) :
+            self.fillNils(with: 0)
+
+        guard nonNils.count > 1 else {
+            return nil
+        }
+
+        let sum = nonNils.map { $0 ?? 0 }.reduce(0, +)
+        let mean = sum / T(nonNils.count)
+
+
+        let diff = nonNils - nonNils.mapTo(constant: mean)
+        let squaredDiffSum = (diff * diff)?.map { $0 ?? 0 }.reduce(0, +)
+        let squaredStd = (squaredDiffSum ?? 0) / T(nonNils.count - 1)
+        return sqrt(squaredStd)
+    }
+
+    func cumulativeSum<T>(initial: T) -> DataSeries<T> where Element == T?, T: Numeric {
         let res = scan(initial: initial) {  $0 + ($1 ?? initial) }
         return DataSeries(res)
     }
