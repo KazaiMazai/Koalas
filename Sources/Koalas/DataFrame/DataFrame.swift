@@ -60,6 +60,11 @@ public func whereCondition<Key, T>(_ condition: DataFrame<Key, Bool>, then trueD
     return res
 }
 
+public func == <Key, T>(lhs: DataFrame<Key,T>?,
+                       rhs: DataFrame<Key,T>?) -> DataFrame<Key, Bool>? where T: Numeric {
+    compactMapValues(lhs: lhs, rhs: rhs) { $0 == $1 }
+}
+
 public func + <Key, T>(lhs: DataFrame<Key,T>?,
                        rhs: DataFrame<Key,T>?) -> DataFrame<Key,T>? where T: Numeric {
     compactMapValues(lhs: lhs, rhs: rhs) { $0 + $1 }
@@ -91,6 +96,22 @@ public func + <Key, T: Numeric>(lhs: DataFrame<Key,T>,
 
     lhs.forEach {
         res[$0.key] = compactMapValues(lhs: $0.value, rhs: rhs[$0.key]) { $0 + $1 }
+    }
+
+    return res
+}
+
+public func == <Key, T: Numeric>(lhs: DataFrame<Key,T>,
+                                 rhs: DataFrame<Key,T>) -> DataFrame<Key, Bool>? {
+
+    guard Set(lhs.keys) == Set(rhs.keys) else {
+        return nil
+    }
+
+    var res = DataFrame<Key, Bool>()
+
+    lhs.forEach {
+        res[$0.key] = compactMapValues(lhs: $0.value, rhs: rhs[$0.key]) { $0 == $1 }
     }
 
     return res

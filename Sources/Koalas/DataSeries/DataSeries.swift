@@ -9,7 +9,7 @@ import Foundation
 
 public typealias DataSeries<T> = SeriesArray<T?>
 
-public func compactMapValues<T>(lhs: T?, rhs: T?, map: (T, T) -> T?) -> T? {
+public func compactMapValues<T, U>(lhs: T?, rhs: T?, map: (T, T) -> U?) -> U? {
     guard let lhs = lhs, let rhs = rhs else {
         return nil
     }
@@ -62,6 +62,17 @@ public func + <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>?  whe
     return DataSeries(res)
 }
 
+public func == <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<Bool>?  where T: Numeric {
+    guard lhs.count == rhs.count else {
+        return nil
+    }
+
+    let res = zip(lhs, rhs).map {
+        compactMapValues(lhs: $0.0, rhs: $0.1) { $0 == $1 }
+    }
+
+    return DataSeries(res)
+}
 
 
 public func - <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>?  where T: Numeric {
