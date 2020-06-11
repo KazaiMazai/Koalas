@@ -104,14 +104,14 @@ final class DataSeriesTests: XCTestCase {
 
     func test_cumulativeSum() {
         let s1 = DataSeries([1, 2, 3 ,4 ,5 ,6, 7, 8])
-        let cumsum = s1.cumsum(initial: 0)
+        let cumulativeSum = s1.cumulativeSum(initial: 0)
 
-        XCTAssertEqual(s1.count, cumsum.count)
+        XCTAssertEqual(s1.count, cumulativeSum.count)
 
-        cumsum.enumerated().forEach {
+        cumulativeSum.enumerated().forEach {
             let idx = $0.offset
             if idx > 0 {
-                XCTAssertEqual($0.element, (cumsum[idx - 1] ?? 0) + (s1[idx] ?? 0))
+                XCTAssertEqual($0.element, (cumulativeSum[idx - 1] ?? 0) + (s1[idx] ?? 0))
             }
         }
     }
@@ -126,10 +126,10 @@ final class DataSeriesTests: XCTestCase {
         let s2 = s1.shiftedBy(window)
 
 
-        let cumsum1 = s1.cumsum(initial: 0)
-        let cumsum2 = s2.cumsum(initial: 0)
+        let cumulativeSum1 = s1.cumulativeSum(initial: 0)
+        let cumulativeSum2 = s2.cumulativeSum(initial: 0)
 
-        guard var rollingSum1 = cumsum1 - cumsum2 else {
+        guard var rollingSum1 = cumulativeSum1 - cumulativeSum2 else {
             XCTFail("Not equal length")
             return
         }
@@ -163,10 +163,10 @@ final class DataSeriesTests: XCTestCase {
         let s1 = DataSeries(arr)
 
         let window = arr.count + 1
-        let cumsum1 = s1.cumsum(initial: 0)
-        let cumsum2 = cumsum1.shiftedBy(window)
+        let cumulativeSum1 = s1.cumulativeSum(initial: 0)
+        let cumulativeSum2 = cumulativeSum1.shiftedBy(window)
 
-        guard let rollingSum1 = cumsum1 - cumsum2 else {
+        guard let rollingSum1 = cumulativeSum1 - cumulativeSum2 else {
             XCTFail("Not equal length")
             return
         }
@@ -197,10 +197,10 @@ final class DataSeriesTests: XCTestCase {
         let s1 = DataSeries(arr)
 
         let window = arr.count
-        let cumsum1 = s1.cumsum(initial: 0)
-        var cumsum2 = cumsum1.shiftedBy(window)
-        cumsum2[window - 1] = 0 //otherwise rolling sum at this point would be wrong due to nil
-        guard let rollingSum1 = cumsum1 - cumsum2 else {
+        let cumulativeSum1 = s1.cumulativeSum(initial: 0)
+        var cumulativeSum2 = cumulativeSum1.shiftedBy(window)
+        cumulativeSum2[window - 1] = 0 //otherwise rolling sum at this point would be wrong due to nil
+        guard let rollingSum1 = cumulativeSum1 - cumulativeSum2 else {
             XCTFail("Not equal length")
             return
         }

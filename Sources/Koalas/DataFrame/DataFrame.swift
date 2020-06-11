@@ -19,8 +19,8 @@ public extension DataFrame {
         return mapValues { $0.shiftedBy(amount) }
     }
 
-    func cumsum<V>(initial: V) -> DataFrame<Key, V> where Value == DataSeries<V>, V: Numeric {
-        return mapValues { $0.cumsum(initial: initial) }
+    func cumulativeSum<V>(initial: V) -> DataFrame<Key, V> where Value == DataSeries<V>, V: Numeric {
+        return mapValues { $0.cumulativeSum(initial: initial) }
     }
 
     func rollingFunc<V>(initial: V, window: Int, windowFunc: (([V?]) -> V?)) -> DataFrame<Key, V> where Value == DataSeries<V>, V: Numeric  {
@@ -31,24 +31,44 @@ public extension DataFrame {
         return mapValues { $0.rollingSum(window: window) }
     }
 
-    func movingAverage<V>(window: Int) -> DataFrame<Key, V> where Value == DataSeries<V>, V: FloatingPoint  {
-        return mapValues { $0.movingAverage(window: window) }
+    func rollingMean<V>(window: Int) -> DataFrame<Key, V> where Value == DataSeries<V>, V: FloatingPoint  {
+        return mapValues { $0.rollingMean(window: window) }
     }
 }
 
+public func whereCondition<Key, T>(_ condition: DataFrame<Key, Bool>, then trueDataFrame: DataFrame<Key, T>, else dataframe: DataFrame<Key, T>) -> DataFrame<Key, T>? {
+
+    let keysSet = Set(condition.keys)
+    guard keysSet == Set(trueDataFrame.keys),
+        keysSet == Set(dataframe.keys)
+        else {
+            return nil
+    }
+
+    var res = DataFrame<Key,T>()
+
+    keysSet.forEach { key in
+       res[key] = compactMapValues(condition[key],
+                                    trueDataFrame[key],
+                                    dataframe[key]) { return whereCondition($0, then: $1, else: $2)  }
+
+    }
+
+    return res
+}
 
 public func + <Key, T>(lhs: DataFrame<Key,T>?,
-                                rhs: DataFrame<Key,T>?) -> DataFrame<Key,T>? where T: Numeric {
+                       rhs: DataFrame<Key,T>?) -> DataFrame<Key,T>? where T: Numeric {
     compactMapValues(lhs: lhs, rhs: rhs) { $0 + $1 }
 }
 
 public func - <Key, T>(lhs: DataFrame<Key,T>?,
-                                rhs: DataFrame<Key,T>?) -> DataFrame<Key,T>? where T: Numeric {
+                       rhs: DataFrame<Key,T>?) -> DataFrame<Key,T>? where T: Numeric {
     compactMapValues(lhs: lhs, rhs: rhs) { $0 - $1 }
 }
 
 public func * <Key, T>(lhs: DataFrame<Key,T>?,
-                                rhs: DataFrame<Key,T>?) -> DataFrame<Key,T>? where T: Numeric {
+                       rhs: DataFrame<Key,T>?) -> DataFrame<Key,T>? where T: Numeric {
     compactMapValues(lhs: lhs, rhs: rhs) { $0 * $1 }
 }
 
@@ -58,7 +78,7 @@ public func / <Key, T>(lhs: DataFrame<Key,T>?,
 }
 
 public func + <Key, T: Numeric>(lhs: DataFrame<Key,T>,
-                         rhs: DataFrame<Key,T>) -> DataFrame<Key,T>? {
+                                rhs: DataFrame<Key,T>) -> DataFrame<Key,T>? {
 
     guard Set(lhs.keys) == Set(rhs.keys) else {
         return nil
@@ -74,7 +94,7 @@ public func + <Key, T: Numeric>(lhs: DataFrame<Key,T>,
 }
 
 public func - <Key, T: Numeric>(lhs: DataFrame<Key,T>,
-                         rhs: DataFrame<Key,T>) -> DataFrame<Key,T>? {
+                                rhs: DataFrame<Key,T>) -> DataFrame<Key,T>? {
 
     guard Set(lhs.keys) == Set(rhs.keys) else {
         return nil
@@ -90,7 +110,7 @@ public func - <Key, T: Numeric>(lhs: DataFrame<Key,T>,
 }
 
 public func * <Key, T: Numeric>(lhs: DataFrame<Key,T>,
-                         rhs: DataFrame<Key,T>) -> DataFrame<Key,T>? {
+                                rhs: DataFrame<Key,T>) -> DataFrame<Key,T>? {
 
     guard Set(lhs.keys) == Set(rhs.keys) else {
         return nil
@@ -106,7 +126,7 @@ public func * <Key, T: Numeric>(lhs: DataFrame<Key,T>,
 }
 
 public func / <Key, T: FloatingPoint>(lhs: DataFrame<Key,T>,
-                               rhs: DataFrame<Key,T>) -> DataFrame<Key,T>? {
+                                      rhs: DataFrame<Key,T>) -> DataFrame<Key,T>? {
 
     guard Set(lhs.keys) == Set(rhs.keys) else {
         return nil
