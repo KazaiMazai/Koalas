@@ -44,7 +44,7 @@ final class DataFrameTests: XCTestCase {
          test_whenDFContainsNils_columnSumNoIgnoreEqualNil),
 
         ("test_forwardFillNils",
-        test_forwardFillNils)
+         test_forwardFillNils)
 
         ("test_backwardFillNils",
          test_backwardFillNils)
@@ -319,25 +319,25 @@ final class DataFrameTests: XCTestCase {
     }
 
     func test_backwardFillNils() {
-           let initial = 10
+        let initial = 10
 
-           let arr1 = [1, 2, nil, 3, nil, 4, nil, 5, nil, nil, nil]
-           let expectedArr1 = [1, 2, 3, 3, 4, 4, 5, 5, initial, initial, initial]
+        let arr1 = [1, 2, nil, 3, nil, 4, nil, 5, nil, nil, nil]
+        let expectedArr1 = [1, 2, 3, 3, 4, 4, 5, 5, initial, initial, initial]
 
-           let arr2 = [nil, 2, nil, 3, nil, 4, nil, 5, nil, nil, nil]
-           let expectedArr2 = [2, 2, 3, 3, 4, 4, 5, 5, initial, initial, initial]
+        let arr2 = [nil, 2, nil, 3, nil, 4, nil, 5, nil, nil, nil]
+        let expectedArr2 = [2, 2, 3, 3, 4, 4, 5, 5, initial, initial, initial]
 
-           let s1 = DataSeries(arr1)
-           let s2 = DataSeries(arr2)
+        let s1 = DataSeries(arr1)
+        let s2 = DataSeries(arr2)
+        
+        let expectedS1 = DataSeries(expectedArr1)
+        let expectedS2 = DataSeries(expectedArr2)
 
-           let expectedS1 = DataSeries(expectedArr1)
-           let expectedS2 = DataSeries(expectedArr2)
+        let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
+        let df2 = DataFrame(dictionaryLiteral: ("1", expectedS1), ("2", expectedS2))
+        let df3 = df1.fillNils(method: .backward(initial: initial))
 
-           let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
-           let df2 = DataFrame(dictionaryLiteral: ("1", expectedS1), ("2", expectedS2))
-           let df3 = df1.fillNils(method: .backward(initial: initial))
-
-           df3.forEach { kv in zip(df2[kv.key]!, kv.value).forEach { XCTAssertEqual($0.0, $0.1) } }
-       }
+        df3.forEach { kv in zip(df2[kv.key]!, kv.value).forEach { XCTAssertEqual($0.0, $0.1) } }
+    }
 
 }
