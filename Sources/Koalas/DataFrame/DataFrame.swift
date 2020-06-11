@@ -48,7 +48,7 @@ public func whereCondition<Key, T>(_ condition: DataFrame<Key, Bool>, then trueD
     var res = DataFrame<Key,T>()
 
     keysSet.forEach { key in
-       res[key] = compactMapValues(condition[key],
+        res[key] = compactMapValues(condition[key],
                                     trueDataFrame[key],
                                     dataframe[key]) { return whereCondition($0, then: $1, else: $2)  }
 
@@ -141,3 +141,30 @@ public func / <Key, T: FloatingPoint>(lhs: DataFrame<Key,T>,
     return res
 }
 
+
+extension DataFrame {
+    func sum<V>(ignoreNils: Bool = true) -> DataFrame<Key, V> where Value == DataSeries<V>, V: Numeric {
+        mapValues { DataSeries([$0.sum(ignoreNils: ignoreNils)]) }
+    }
+
+    func columnSum<V>(ignoreNils: Bool = true) -> DataSeries<V>? where Value == DataSeries<V>, V: Numeric {
+        guard let first = values.first else {
+            return nil
+        }
+
+        let res = DataSeries<V>(repeating: 0, count: first.count)
+
+        return values.reduce(res) { (currentRes, next) in
+            let nextSeries = ignoreNils ? next.fillNils(with: 0) : next
+            return currentRes + nextSeries
+        }
+    }
+
+    func mean<V>(shouldSkipNils: Bool = true) -> DataFrame<Key, V> where Value == DataSeries<V>, V: FloatingPoint {
+        mapValues { DataSeries([$0.mean(shouldSkipNils: shouldSkipNils)]) }
+    }
+
+    func std<V>(shouldSkipNils: Bool = true) -> DataFrame<Key, V> where Value == DataSeries<V>, V: FloatingPoint {
+        mapValues { DataSeries([$0.std(shouldSkipNils: shouldSkipNils)]) }
+    }
+}
