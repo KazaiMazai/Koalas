@@ -167,4 +167,8 @@ extension DataFrame {
     func std<V>(shouldSkipNils: Bool = true) -> DataFrame<Key, V> where Value == DataSeries<V>, V: FloatingPoint {
         mapValues { DataSeries([$0.std(shouldSkipNils: shouldSkipNils)]) }
     }
+
+    func fillNils<V>(method: FillNilsMethod<V>) -> DataFrame<Key, V> where Value == DataSeries<V>, V: Numeric  {
+        mapValues { $0.fillNils(method: method) }
+    }
 }
