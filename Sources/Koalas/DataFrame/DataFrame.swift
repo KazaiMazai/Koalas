@@ -152,11 +152,11 @@ extension DataFrame {
             return nil
         }
 
-        let res = DataSeries<V>(repeating: 0, count: first.count)
+        let initial = DataSeries<V>(repeating: 0, count: first.count)
 
-        return values.reduce(res) { (currentRes, next) in
-            let nextSeries = ignoreNils ? next.fillNils(with: 0) : next
-            return currentRes + nextSeries
+        return values.reduce(initial) { (currentRes: DataSeries<V>, next: DataSeries<V>) -> DataSeries<V> in
+            let nextSeries: DataSeries<V> = ignoreNils ? next.fillNils(with: 0) : next
+            return (currentRes + nextSeries) ?? currentRes
         }
     }
 
