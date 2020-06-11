@@ -25,13 +25,14 @@ public func compactMapValues<T, U, V, S>(_ t: T?, _ u: U?, _ v: V?, map: (T, U, 
     return map(t, u, v)
 }
 
-public func compactMapValue<T>(value: T?, map: (T) -> T) -> T? {
+public func compactMapValue<T, U>(value: T?, map: (T) -> U?) -> U? {
     guard let value = value else {
         return nil
     }
 
     return map(value)
 }
+
 
 public func + <T>(lhs: DataSeries<T>?, rhs: DataSeries<T>?) -> DataSeries<T>?  where T: Numeric {
     compactMapValues(lhs: lhs, rhs: rhs) { $0 + $1 }
