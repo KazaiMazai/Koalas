@@ -42,7 +42,34 @@ final class DataSeriesTests: XCTestCase {
          test_whenSeriesLengthEqual_MemberwiseProd),
 
         ("test_whenSeriesLengthEqual_MemberwiseDevide",
-         test_whenSeriesLengthEqual_MemberwiseDevide)
+         test_whenSeriesLengthEqual_MemberwiseDevide),
+
+        ("test_whenSeriesLengthEqual_MemberwiseConditionalMap",
+         test_whenSeriesLengthEqual_MemberwiseConditionalMap),
+
+        ("test_whenSeriesLengthNotEqual_MemberwiseConditionalNilResult",
+         test_whenSeriesLengthNotEqual_MemberwiseConditionalNilResult),
+
+        ("test_whenSeriesContainsNoNils_sum",
+         test_whenSeriesContainsNoNils_sum),
+
+        ("test_whenSeriesContainsDoubleAndNoNils_sum",
+         test_whenSeriesContainsDoubleAndNoNils_sum),
+
+        ("test_whenSeriesContainsNills_sumWithIgnoreNils",
+            test_whenSeriesContainsNills_sumWithIgnoreNils),
+
+        ("test_whenSeriesContainsNills_sumWithNoIgnoreNilsEqualsNil",
+         test_whenSeriesContainsNills_sumWithNoIgnoreNilsEqualsNil),
+
+        ("test_whenSeriesContainsNoNils_mean",
+         test_whenSeriesContainsNoNils_mean),
+
+        ("test_whenSeriesContainsNils_meanWithIgnoreNils",
+         test_whenSeriesContainsNils_meanWithIgnoreNils),
+
+        ("test_whenSeriesContainsNils_meanNoIgnoreNils",
+         test_whenSeriesContainsNils_meanNoIgnoreNils)
     ]
 
     func test_whenShiftedPositiveByN_NilsInTheBeginningCountsNAndArraysMatch() {
@@ -338,5 +365,83 @@ final class DataSeriesTests: XCTestCase {
         let s3 = DataSeries([true, false, true, nil, false])
         let result = s3.whereTrue(then: s1, else: s2)
         XCTAssertNil(result)
+    }
+
+    func test_whenSeriesContainsNoNils_sum() {
+        let first: Int = 1
+        let last: Int = 20
+
+        let arr = Array(first...last)
+
+        let s1 = DataSeries(arr)
+        XCTAssertEqual(s1.sum(ignoreNils: true), arr.reduce(0, +))
+    }
+
+    func test_whenSeriesContainsDoubleAndNoNils_sum() {
+        let first: Double = 1
+        let last: Double = 20
+
+        let arr = Array(stride(from: first, through: last, by: 1.0))
+
+        let s1 = DataSeries(arr)
+        XCTAssertEqual(s1.sum(ignoreNils: true), arr.reduce(0, +))
+    }
+
+    func test_whenSeriesContainsNills_sumWithIgnoreNils() {
+        let first: Int = 1
+        let last: Int = 20
+
+        let arr = Array(first...last)
+
+        var s1 = DataSeries(arr)
+        s1.append(nil)
+        XCTAssertEqual(s1.sum(ignoreNils: true), arr.reduce(0, +))
+    }
+
+    func test_whenSeriesContainsNills_sumWithNoIgnoreNilsEqualsNil() {
+        let first: Int = 1
+        let last: Int = 20
+
+        let arr = Array(first...last)
+
+        var s1 = DataSeries(arr)
+        s1.append(nil)
+
+        XCTAssertNil(s1.sum(ignoreNils: false))
+    }
+
+    func test_whenSeriesContainsNoNils_mean() {
+        let first: Double = 1
+        let last: Double = 20
+
+        let arr = Array(stride(from: first, through: last, by: 1.0))
+
+        let s1 = DataSeries(arr)
+        XCTAssertEqual(s1.mean(shouldSkipNils: true), arr.reduce(0, +) / Double(arr.count))
+    }
+
+    func test_whenSeriesContainsNils_meanWithIgnoreNils() {
+        let first: Double = 1
+        let last: Double = 20
+
+        let arr = Array(stride(from: first, through: last, by: 1.0))
+
+        var s1 = DataSeries(arr)
+        s1.append(nil)
+
+        XCTAssertEqual(s1.mean(shouldSkipNils: true), arr.reduce(0, +) / Double(arr.count))
+    }
+
+    func test_whenSeriesContainsNils_meanNoIgnoreNils() {
+        let first: Double = 1
+        let last: Double = 20
+
+        var arr = Array(stride(from: first, through: last, by: 1.0))
+
+        var s1 = DataSeries(arr)
+        s1.append(contentsOf: [nil, nil, nil])
+        arr.append(contentsOf: [0, 0, 0])
+
+        XCTAssertEqual(s1.mean(shouldSkipNils: false), arr.reduce(0, +) / Double(arr.count))
     }
 }
