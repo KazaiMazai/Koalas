@@ -39,7 +39,25 @@ public extension DataFrame {
     }
 }
 
-public func whereCondition<Key, T>(_ condition: DataFrame<Key, Bool>, then trueDataFrame: DataFrame<Key, T>, else dataframe: DataFrame<Key, T>) -> DataFrame<Key, T>? {
+public func whereCondition<Key, T>(_ condition: DataFrame<Key, Bool>?, then trueValue: T, else value: T) -> DataFrame<Key, T>? {
+    guard let condition = condition else {
+        return nil
+    }
+
+    let trueDF = condition.mapTo(constant: trueValue)
+    let falseDF = condition.mapTo(constant: value)
+
+    return whereCondition(condition, then: trueDF, else: falseDF)
+}
+
+public func whereCondition<Key, T>(_ condition: DataFrame<Key, Bool>?, then trueDataFrame: DataFrame<Key, T>?, else dataframe: DataFrame<Key, T>?) -> DataFrame<Key, T>? {
+
+    guard let condition = condition,
+        let trueDataFrame = trueDataFrame,
+        let dataframe = dataframe
+    else {
+            return nil
+    }
 
     let keysSet = Set(condition.keys)
     guard keysSet == Set(trueDataFrame.keys),
@@ -58,6 +76,11 @@ public func whereCondition<Key, T>(_ condition: DataFrame<Key, Bool>, then trueD
     }
 
     return res
+}
+
+public func != <Key, T>(lhs: DataFrame<Key,T>?,
+                       rhs: DataFrame<Key,T>?) -> DataFrame<Key, Bool>? where T: Numeric {
+    compactMapValues(lhs: lhs, rhs: rhs) { $0 != $1 }
 }
 
 public func == <Key, T>(lhs: DataFrame<Key,T>?,

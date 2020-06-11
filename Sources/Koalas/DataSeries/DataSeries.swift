@@ -62,6 +62,18 @@ public func + <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>?  whe
     return DataSeries(res)
 }
 
+public func != <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<Bool>?  where T: Numeric {
+    guard lhs.count == rhs.count else {
+        return nil
+    }
+
+    let res = zip(lhs, rhs).map {
+        compactMapValues(lhs: $0.0, rhs: $0.1) { $0 != $1 }
+    }
+
+    return DataSeries(res)
+}
+
 public func == <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<Bool>?  where T: Numeric {
     guard lhs.count == rhs.count else {
         return nil
@@ -119,12 +131,29 @@ public func zipSeries<T1, T2, T3>(s1: SeriesArray<T1>, s2: SeriesArray<T2>, s3: 
     return zip(s1, zip(s2, s3)).map { ($0.0, $0.1.0, $0.1.1) }
 }
 
-public func whereCondition<U>(_ condition: DataSeries<Bool>, then trueSeries: DataSeries<U>, else series: DataSeries<U>) -> DataSeries<U>?   {
-    return condition.whereTrue(then: trueSeries, else: series)
+public func whereCondition<U>(_ condition: DataSeries<Bool>?, then trueSeries: DataSeries<U>?, else series: DataSeries<U>?) -> DataSeries<U>?   {
+    return condition?.whereTrue(then: trueSeries, else: series)
+}
+
+public func whereCondition<U>(_ condition: DataSeries<Bool>?, then trueValue: U, else value: U) -> DataSeries<U>?   {
+    guard let condition = condition else {
+        return nil
+    }
+
+    let trueSeries = condition.mapTo(constant: trueValue)
+    let falseSeries = condition.mapTo(constant: value)
+
+    return condition.whereTrue(then: trueSeries, else: falseSeries)
 }
 
 public extension SeriesArray  {
-    func whereTrue<U>(then trueSeries: DataSeries<U>, else series: DataSeries<U>) -> DataSeries<U>? where Element == Bool?  {
+    func whereTrue<U>(then trueSeries: DataSeries<U>?, else series: DataSeries<U>?) -> DataSeries<U>? where Element == Bool?  {
+        guard let trueSeries = trueSeries,
+            let series = series
+        else {
+            return nil
+        }
+
         guard let zip3 = zipSeries(s1: self, s2: trueSeries, s3: series) else {
             return nil
         }
