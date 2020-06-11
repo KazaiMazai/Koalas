@@ -50,6 +50,14 @@ public func / <T>(lhs: DataSeries<T>?, rhs: DataSeries<T>?) -> DataSeries<T>?  w
     compactMapValues(lhs: lhs, rhs: rhs) { $0 / $1 }
 }
 
+public func != <T>(lhs: DataSeries<T>?, rhs: DataSeries<T>?) -> DataSeries<Bool>? where T: Equatable {
+    compactMapValues(lhs: lhs, rhs: rhs) { $0 != $1 }
+}
+
+public func == <T>(lhs: DataSeries<T>?, rhs: DataSeries<T>?) -> DataSeries<Bool>? where T: Equatable {
+    compactMapValues(lhs: lhs, rhs: rhs) { $0 == $1 }
+}
+
 public func + <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>?  where T: Numeric {
     guard lhs.count == rhs.count else {
         return nil
@@ -62,7 +70,7 @@ public func + <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>?  whe
     return DataSeries(res)
 }
 
-public func != <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<Bool>?  where T: Numeric {
+public func != <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<Bool>?  where T: Equatable {
     guard lhs.count == rhs.count else {
         return nil
     }
@@ -74,7 +82,7 @@ public func != <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<Bool>? 
     return DataSeries(res)
 }
 
-public func == <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<Bool>?  where T: Numeric {
+public func == <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<Bool>?  where T: Equatable {
     guard lhs.count == rhs.count else {
         return nil
     }

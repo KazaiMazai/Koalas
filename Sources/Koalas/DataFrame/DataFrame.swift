@@ -79,12 +79,12 @@ public func whereCondition<Key, T>(_ condition: DataFrame<Key, Bool>?, then true
 }
 
 public func != <Key, T>(lhs: DataFrame<Key,T>?,
-                       rhs: DataFrame<Key,T>?) -> DataFrame<Key, Bool>? where T: Numeric {
+                       rhs: DataFrame<Key,T>?) -> DataFrame<Key, Bool>? where T: Equatable {
     compactMapValues(lhs: lhs, rhs: rhs) { $0 != $1 }
 }
 
 public func == <Key, T>(lhs: DataFrame<Key,T>?,
-                       rhs: DataFrame<Key,T>?) -> DataFrame<Key, Bool>? where T: Numeric {
+                       rhs: DataFrame<Key,T>?) -> DataFrame<Key, Bool>? where T: Equatable {
     compactMapValues(lhs: lhs, rhs: rhs) { $0 == $1 }
 }
 
