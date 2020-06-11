@@ -62,7 +62,7 @@ final class DataFrameTests: XCTestCase {
 
         let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
         let df2 = df1.mapTo(constant: constant)
-
+ 
         df2.forEach {
             XCTAssertEqual($0.value.count, s1.count)
 
