@@ -5,7 +5,6 @@
 //  Created by Sergey Kazakov on 04.06.2020.
 //
 
-
 public typealias DataPanel<Key: Hashable, Key2: Hashable, V> = [Key: DataFrame<Key2, V>]
 
 public extension DataPanel {
