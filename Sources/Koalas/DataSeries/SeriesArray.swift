@@ -124,12 +124,6 @@ public extension SeriesArray {
     }
 }
 
-public extension SeriesArray where T: Equatable {
-    static func == (lhs: SeriesArray<T>, rhs: SeriesArray<T>) -> Bool {
-        return lhs.array == rhs.array
-    }
-}
-
 extension SeriesArray: CustomStringConvertible {
     public var description: String { return "\(array)" }
 }
