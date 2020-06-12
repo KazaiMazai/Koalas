@@ -213,6 +213,10 @@ public func / <Key, T: FloatingPoint>(lhs: DataFrame<Key,T>,
 
 
 public extension DataFrame {
+    func shape<V>() -> (width: Int, height: Int) where Value == DataSeries<V> {
+        return (self.keys.count, self.values.first?.count ?? 0)
+    }
+
     func sum<V>(ignoreNils: Bool = true) -> DataFrame<Key, V> where Value == DataSeries<V>, V: Numeric {
         mapValues { DataSeries([$0.sum(ignoreNils: ignoreNils)]) }
     }

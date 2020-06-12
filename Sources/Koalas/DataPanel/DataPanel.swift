@@ -43,6 +43,11 @@ public extension DataPanel {
 
             return transform(self[keys.0], self[keys.1])
     }
+
+    func shape<Key2, V>() -> (depth: Int, width: Int, height: Int) where Value == DataFrame<Key2, V>  {
+        let valueShape = self.values.first?.shape() ?? (width: 0, height: 0)
+        return (self.keys.count, valueShape.width, valueShape.height)
+    }
 }
 
 
