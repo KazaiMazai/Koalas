@@ -172,11 +172,11 @@ public extension SeriesArray  {
 }
 
 public extension SeriesArray {
-    func fillNils<T>(with value: T) -> DataSeries<T> where Element == T? {
+    func fillNils<T>(with value: Element) -> DataSeries<T> where Element == T? {
         return DataSeries(map { $0 ?? value } )
     }
 
-    func fillNils<T>(method: FillNilsMethod<T>) -> DataSeries<T> where Element == T? {
+    func fillNils<T>(method: FillNilsMethod<Element>) -> DataSeries<T> where Element == T? {
         switch method {
         case .all(let value):
             return fillNils(with: value)

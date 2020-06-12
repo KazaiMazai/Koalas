@@ -238,7 +238,7 @@ public extension DataFrame {
         mapValues { DataSeries([$0.std(shouldSkipNils: shouldSkipNils)]) }
     }
 
-    func fillNils<V>(method: FillNilsMethod<V>) -> DataFrame<Key, V> where Value == DataSeries<V> {
+    func fillNils<V>(method: FillNilsMethod<V?>) -> DataFrame<Key, V> where Value == DataSeries<V> {
         mapValues { $0.fillNils(method: method) }
     }
 }
