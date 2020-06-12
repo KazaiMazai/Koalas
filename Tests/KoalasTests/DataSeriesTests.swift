@@ -47,8 +47,6 @@ final class DataSeriesTests: XCTestCase {
         ("test_whenSeriesLengthEqual_MemberwiseConditionalMap",
          test_whenSeriesLengthEqual_MemberwiseConditionalMap),
 
-        ("test_whenSeriesLengthNotEqual_MemberwiseConditionalNilResult",
-         test_whenSeriesLengthNotEqual_MemberwiseConditionalNilResult),
 
         ("test_whenSeriesContainsNoNils_sum",
          test_whenSeriesContainsNoNils_sum),
@@ -168,10 +166,8 @@ final class DataSeriesTests: XCTestCase {
         let cumulativeSum1 = s1.cumulativeSum(initial: 0)
         let cumulativeSum2 = s2.cumulativeSum(initial: 0)
 
-        guard var rollingSum1 = cumulativeSum1 - cumulativeSum2 else {
-            XCTFail("Not equal length")
-            return
-        }
+        var rollingSum1 = cumulativeSum1 - cumulativeSum2
+
         /**when index is less then window size, then nil value in rolling sum
          */
         rollingSum1.replaceSubrange(0..<window-1, with: DataSeries(repeating: nil, count: window-1))
@@ -205,12 +201,7 @@ final class DataSeriesTests: XCTestCase {
         let cumulativeSum1 = s1.cumulativeSum(initial: 0)
         let cumulativeSum2 = cumulativeSum1.shiftedBy(window)
 
-        guard let rollingSum1 = cumulativeSum1 - cumulativeSum2 else {
-            XCTFail("Not equal length")
-            return
-        }
-
-
+        let rollingSum1 = cumulativeSum1 - cumulativeSum2
 
         let rollingSum2 = s1.rollingScan(initial: nil, window: window) { (w: [Int?]) -> Int? in
             guard w.allSatisfy({ $0 != nil }) else {
@@ -239,10 +230,7 @@ final class DataSeriesTests: XCTestCase {
         let cumulativeSum1 = s1.cumulativeSum(initial: 0)
         var cumulativeSum2 = cumulativeSum1.shiftedBy(window)
         cumulativeSum2[window - 1] = 0 //otherwise rolling sum at this point would be wrong due to nil
-        guard let rollingSum1 = cumulativeSum1 - cumulativeSum2 else {
-            XCTFail("Not equal length")
-            return
-        }
+        let rollingSum1 = cumulativeSum1 - cumulativeSum2
 
         let rollingSum2 = s1.rollingScan(initial: nil, window: window) { (w: [Int?]) -> Int? in
             guard w.allSatisfy({ $0 != nil }) else {
@@ -282,10 +270,7 @@ final class DataSeriesTests: XCTestCase {
         let s1 = DataSeries(arr)
         let s2 = DataSeries(arr)
 
-        guard let s3 = s1 + s2 else {
-            XCTFail("Not equal length")
-            return
-        }
+        let s3 = s1 + s2
 
         XCTAssertEqual(s3.count, s1.count)
         s3.enumerated().forEach { XCTAssertEqual($0.element!, s2[$0.offset]! + s1[$0.offset]!)  }
@@ -300,10 +285,7 @@ final class DataSeriesTests: XCTestCase {
         let s1 = DataSeries(arr)
         let s2 = DataSeries(arr)
 
-        guard let s3 = s1 - s2 else {
-            XCTFail("Not equal length")
-            return
-        }
+        let s3 = s1 - s2
 
         XCTAssertEqual(s3.count, s1.count)
         s3.enumerated().forEach { XCTAssertEqual($0.element!, s2[$0.offset]! - s1[$0.offset]!)  }
@@ -318,10 +300,7 @@ final class DataSeriesTests: XCTestCase {
         let s1 = DataSeries(arr)
         let s2 = DataSeries(arr)
 
-        guard let s3 = s1 * s2 else {
-            XCTFail("Not equal length")
-            return
-        }
+        let s3 = s1 * s2
 
         XCTAssertEqual(s3.count, s1.count)
         s3.enumerated().forEach { XCTAssertEqual($0.element!, s2[$0.offset]! * s1[$0.offset]!)  }
@@ -335,10 +314,7 @@ final class DataSeriesTests: XCTestCase {
         let s1 = DataSeries(arr)
         let s2 = DataSeries(arr)
 
-        guard let s3 = s1 / s2 else {
-            XCTFail("Not equal length")
-            return
-        }
+        let s3 = s1 / s2
 
         XCTAssertEqual(s3.count, s1.count)
         s3.enumerated().forEach { XCTAssertEqual($0.element!, s2[$0.offset]! / s1[$0.offset]!)  }
@@ -369,16 +345,7 @@ final class DataSeriesTests: XCTestCase {
 
         }
     }
-
-    func test_whenSeriesLengthNotEqual_MemberwiseConditionalNilResult() {
-
-        let s1 = DataSeries(repeating: 1, count: 4)
-        let s2 = DataSeries(repeating: 2, count: 5)
-        let s3 = DataSeries([true, false, true, nil, false])
-        let result = s3.whereTrue(then: s1, else: s2)
-        XCTAssertNil(result)
-    }
-
+    
     func test_whenSeriesContainsNoNils_sum() {
         let first: Int = 1
         let last: Int = 20
