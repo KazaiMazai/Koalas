@@ -212,7 +212,7 @@ public func / <Key, T: FloatingPoint>(lhs: DataFrame<Key,T>,
 }
 
 
-extension DataFrame {
+public extension DataFrame {
     func sum<V>(ignoreNils: Bool = true) -> DataFrame<Key, V> where Value == DataSeries<V>, V: Numeric {
         mapValues { DataSeries([$0.sum(ignoreNils: ignoreNils)]) }
     }
