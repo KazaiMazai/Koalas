@@ -83,11 +83,8 @@ public func whereCondition<Key, T>(_ condition: DataFrame<Key, Bool>?,
     }
 
     let keysSet = Set(condition.keys)
-    guard keysSet == Set(trueDataFrame.keys),
-        keysSet == Set(dataframe.keys)
-        else {
-            return nil
-    }
+    assert(keysSet == Set(trueDataFrame.keys), "Dataframes should have equal keys sets")
+    assert(keysSet == Set(dataframe.keys), "Dataframes should have equal keys sets")
 
     var res = DataFrame<Key,T>()
 
@@ -95,7 +92,6 @@ public func whereCondition<Key, T>(_ condition: DataFrame<Key, Bool>?,
         res[key] = compactMapValues(condition[key],
                                     trueDataFrame[key],
                                     dataframe[key]) { return whereCondition($0, then: $1, else: $2)  }
-
     }
 
     return res
@@ -132,11 +128,9 @@ public func / <Key, T>(lhs: DataFrame<Key,T>?,
 }
 
 public func + <Key, T: Numeric>(lhs: DataFrame<Key,T>,
-                                rhs: DataFrame<Key,T>) -> DataFrame<Key,T>? {
+                                rhs: DataFrame<Key,T>) -> DataFrame<Key,T> {
 
-    guard Set(lhs.keys) == Set(rhs.keys) else {
-        return nil
-    }
+    assert(Set(lhs.keys) == Set(rhs.keys), "Dataframes should have equal keys sets")
     
     var res = DataFrame<Key,T>()
 
@@ -148,11 +142,9 @@ public func + <Key, T: Numeric>(lhs: DataFrame<Key,T>,
 }
 
 public func == <Key, T: Numeric>(lhs: DataFrame<Key,T>,
-                                 rhs: DataFrame<Key,T>) -> DataFrame<Key, Bool>? {
+                                 rhs: DataFrame<Key,T>) -> DataFrame<Key, Bool> {
 
-    guard Set(lhs.keys) == Set(rhs.keys) else {
-        return nil
-    }
+    assert(Set(lhs.keys) == Set(rhs.keys), "Dataframes should have equal keys sets")
 
     var res = DataFrame<Key, Bool>()
 
@@ -164,11 +156,9 @@ public func == <Key, T: Numeric>(lhs: DataFrame<Key,T>,
 }
 
 public func - <Key, T: Numeric>(lhs: DataFrame<Key,T>,
-                                rhs: DataFrame<Key,T>) -> DataFrame<Key,T>? {
+                                rhs: DataFrame<Key,T>) -> DataFrame<Key,T> {
 
-    guard Set(lhs.keys) == Set(rhs.keys) else {
-        return nil
-    }
+    assert(Set(lhs.keys) == Set(rhs.keys), "Dataframes should have equal keys sets")
 
     var res = DataFrame<Key,T>()
 
@@ -180,11 +170,9 @@ public func - <Key, T: Numeric>(lhs: DataFrame<Key,T>,
 }
 
 public func * <Key, T: Numeric>(lhs: DataFrame<Key,T>,
-                                rhs: DataFrame<Key,T>) -> DataFrame<Key,T>? {
+                                rhs: DataFrame<Key,T>) -> DataFrame<Key,T> {
 
-    guard Set(lhs.keys) == Set(rhs.keys) else {
-        return nil
-    }
+    assert(Set(lhs.keys) == Set(rhs.keys), "Dataframes should have equal keys sets")
 
     var res = DataFrame<Key,T>()
 
@@ -196,11 +184,8 @@ public func * <Key, T: Numeric>(lhs: DataFrame<Key,T>,
 }
 
 public func / <Key, T: FloatingPoint>(lhs: DataFrame<Key,T>,
-                                      rhs: DataFrame<Key,T>) -> DataFrame<Key,T>? {
-
-    guard Set(lhs.keys) == Set(rhs.keys) else {
-        return nil
-    }
+                                      rhs: DataFrame<Key,T>) -> DataFrame<Key,T> {
+    assert(Set(lhs.keys) == Set(rhs.keys), "Dataframes should have equal keys sets")
 
     var res = DataFrame<Key,T>()
 
@@ -230,7 +215,7 @@ public extension DataFrame {
 
         return values.reduce(initial) { (currentRes: DataSeries<V>, next: DataSeries<V>) -> DataSeries<V> in
             let nextSeries: DataSeries<V> = ignoreNils ? next.fillNils(with: 0) : next
-            return (currentRes + nextSeries) ?? currentRes
+            return currentRes + nextSeries
         }
     }
 
