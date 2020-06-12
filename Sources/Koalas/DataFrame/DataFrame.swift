@@ -9,16 +9,16 @@ import Foundation
 
 public typealias DataFrame<K: Hashable, V> = Dictionary<K, DataSeries<V>>
 
-public enum DFType<DF, V> {
+public enum DataFrameType<DF, V> {
     case df(DF?)
     case value(V?)
 
-    func toDataframeWithShape<Key, T>(of df: DataFrame<Key, T>) -> DataFrame<Key, V>? where DF == DataFrame<Key, V> {
+    func toDataframeWithShape<Key, T>(of dataframe: DataFrame<Key, T>) -> DataFrame<Key, V>? where DF == DataFrame<Key, V> {
         switch self {
-        case .df(let dataframe):
-          return dataframe
+        case .df(let df):
+          return df
         case .value(let scalarValue):
-            return df.mapValues { DataSeries($0.map { _ in return scalarValue }) }
+            return dataframe.mapValues { DataSeries($0.map { _ in return scalarValue }) }
         }
     }
 }
@@ -54,8 +54,8 @@ public extension DataFrame {
 }
 
 public func whereCondition<Key, T>(_ condition: DataFrame<Key, Bool>?,
-                                   then trueDF: DFType<DataFrame<Key, T>, T>,
-                                   else df: DFType<DataFrame<Key, T>, T>) -> DataFrame<Key, T>? {
+                                   then trueDF: DataFrameType<DataFrame<Key, T>, T>,
+                                   else df: DataFrameType<DataFrame<Key, T>, T>) -> DataFrame<Key, T>? {
     guard let condition = condition else {
         return nil
     }
@@ -238,7 +238,7 @@ public extension DataFrame {
         mapValues { DataSeries([$0.std(shouldSkipNils: shouldSkipNils)]) }
     }
 
-    func fillNils<V>(method: FillNilsMethod<V>) -> DataFrame<Key, V> where Value == DataSeries<V>, V: Numeric  {
+    func fillNils<V>(method: FillNilsMethod<V>) -> DataFrame<Key, V> where Value == DataSeries<V> {
         mapValues { $0.fillNils(method: method) }
     }
 }
