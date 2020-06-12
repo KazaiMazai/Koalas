@@ -9,6 +9,20 @@ import Foundation
 
 public typealias DataFrame<K: Hashable, V> = Dictionary<K, DataSeries<V>>
 
+public enum DFType<DF, V> {
+    case df(DF?)
+    case value(V?)
+
+    func toDataframeWithShape<Key, T>(of df: DataFrame<Key, T>) -> DataFrame<Key, V>? where DF == DataFrame<Key, V> {
+        switch self {
+        case .df(let dataframe):
+          return dataframe
+        case .value(let scalarValue):
+            return df.mapValues { DataSeries($0.map { _ in return scalarValue }) }
+        }
+    }
+}
+
 public extension DataFrame {
     func flatMapValues<V, U>(transform: (V?) -> U?) -> DataFrame<Key, U> where Value == DataSeries<V> {
         return mapValues { series in DataSeries(series.map { transform($0) }) }
@@ -39,18 +53,27 @@ public extension DataFrame {
     }
 }
 
-public func whereCondition<Key, T>(_ condition: DataFrame<Key, Bool>?, then trueValue: T, else value: T) -> DataFrame<Key, T>? {
+public func whereCondition<Key, T>(_ condition: DataFrame<Key, Bool>?,
+                                   then trueDF: DFType<DataFrame<Key, T>, T>,
+                                   else df: DFType<DataFrame<Key, T>, T>) -> DataFrame<Key, T>? {
     guard let condition = condition else {
         return nil
     }
 
-    let trueDF = condition.mapTo(constant: trueValue)
-    let falseDF = condition.mapTo(constant: value)
+    guard let trueDF = trueDF.toDataframeWithShape(of: condition) else {
+        return nil
+    }
+
+    guard let falseDF = df.toDataframeWithShape(of: condition) else {
+        return nil
+    }
 
     return whereCondition(condition, then: trueDF, else: falseDF)
 }
 
-public func whereCondition<Key, T>(_ condition: DataFrame<Key, Bool>?, then trueDataFrame: DataFrame<Key, T>?, else dataframe: DataFrame<Key, T>?) -> DataFrame<Key, T>? {
+public func whereCondition<Key, T>(_ condition: DataFrame<Key, Bool>?,
+                                   then trueDataFrame: DataFrame<Key, T>?,
+                                   else dataframe: DataFrame<Key, T>?) -> DataFrame<Key, T>? {
 
     guard let condition = condition,
         let trueDataFrame = trueDataFrame,
