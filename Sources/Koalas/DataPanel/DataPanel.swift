@@ -26,8 +26,12 @@ public extension DataPanel {
             return transposedData
     }
 
-    func mapPanelValues<Key2, V>(_ transform: (DataSeries<V>) -> DataSeries<V> ) -> DataPanel<Key, Key2, V> where Value == DataFrame<Key2, V>  {
+    func flatMapDataFrameValues<Key2, V, U>(_ transform: (DataSeries<V>) -> DataSeries<U> ) -> DataPanel<Key, Key2, U> where Value == DataFrame<Key2, V>  {
         return self.mapValues { $0.mapValues { transform($0) } }
+    }
+
+    func flatMapValues<Key2, V, U>(_ transform: (V?) -> U? ) -> DataPanel<Key, Key2, U> where Value == DataFrame<Key2, V>  {
+        return self.flatMapDataFrameValues { series in DataSeries(series.map { transform($0) }) }
     }
 
     func mapValues<Key2, V>(keys: (Key, Key),
@@ -39,6 +43,11 @@ public extension DataPanel {
 
             return transform(self[keys.0], self[keys.1])
     }
+
+    func shape<Key2, V>() -> (depth: Int, width: Int, height: Int) where Value == DataFrame<Key2, V>  {
+        let valueShape = self.values.first?.shape() ?? (width: 0, height: 0)
+        return (self.keys.count, valueShape.width, valueShape.height)
+    }
 }
 
- 
+
