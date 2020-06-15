@@ -9,7 +9,7 @@ import Foundation
 
 public typealias DataSeries<T> = SeriesArray<T?>
 
-public func compactMapValues<T>(lhs: T?, rhs: T?, map: (T, T) -> T?) -> T? {
+public func compactMapValues<T, U>(lhs: T?, rhs: T?, map: (T, T) -> U?) -> U? {
     guard let lhs = lhs, let rhs = rhs else {
         return nil
     }
@@ -25,13 +25,14 @@ public func compactMapValues<T, U, V, S>(_ t: T?, _ u: U?, _ v: V?, map: (T, U, 
     return map(t, u, v)
 }
 
-public func compactMapValue<T>(value: T?, map: (T) -> T) -> T? {
+public func compactMapValue<T, U>(value: T?, map: (T) -> U?) -> U? {
     guard let value = value else {
         return nil
     }
 
     return map(value)
 }
+
 
 public func + <T>(lhs: DataSeries<T>?, rhs: DataSeries<T>?) -> DataSeries<T>?  where T: Numeric {
     compactMapValues(lhs: lhs, rhs: rhs) { $0 + $1 }
@@ -49,10 +50,16 @@ public func / <T>(lhs: DataSeries<T>?, rhs: DataSeries<T>?) -> DataSeries<T>?  w
     compactMapValues(lhs: lhs, rhs: rhs) { $0 / $1 }
 }
 
-public func + <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>?  where T: Numeric {
-    guard lhs.count == rhs.count else {
-        return nil
-    }
+public func != <T>(lhs: DataSeries<T>?, rhs: DataSeries<T>?) -> DataSeries<Bool>? where T: Equatable {
+    compactMapValues(lhs: lhs, rhs: rhs) { $0 != $1 }
+}
+
+public func == <T>(lhs: DataSeries<T>?, rhs: DataSeries<T>?) -> DataSeries<Bool>? where T: Equatable {
+    compactMapValues(lhs: lhs, rhs: rhs) { $0 == $1 }
+}
+
+public func + <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>  where T: Numeric {
+    assert(lhs.count == rhs.count, "Dataseries should have equal length")
 
     let res = zip(lhs, rhs).map {
         compactMapValues(lhs: $0.0, rhs: $0.1) { $0 + $1 }
@@ -61,12 +68,29 @@ public func + <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>?  whe
     return DataSeries(res)
 }
 
+public func != <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<Bool>  where T: Equatable {
+    assert(lhs.count == rhs.count, "Dataseries should have equal length")
 
-
-public func - <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>?  where T: Numeric {
-    guard lhs.count == rhs.count else {
-        return nil
+    let res = zip(lhs, rhs).map {
+        compactMapValues(lhs: $0.0, rhs: $0.1) { $0 != $1 }
     }
+
+    return DataSeries(res)
+}
+
+public func == <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<Bool>  where T: Equatable {
+    assert(lhs.count == rhs.count, "Dataseries should have equal length")
+
+    let res = zip(lhs, rhs).map {
+        compactMapValues(lhs: $0.0, rhs: $0.1) { $0 == $1 }
+    }
+
+    return DataSeries(res)
+}
+
+
+public func - <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>  where T: Numeric {
+    assert(lhs.count == rhs.count, "Dataseries should have equal length")
 
     let res = zip(lhs, rhs).map {
         compactMapValues(lhs: $0.0, rhs: $0.1) { $0 - $1 }
@@ -75,10 +99,8 @@ public func - <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>?  whe
     return DataSeries(res)
 }
 
-public func * <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>?  where T: Numeric {
-    guard lhs.count == rhs.count else {
-        return nil
-    }
+public func * <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>  where T: Numeric {
+    assert(lhs.count == rhs.count, "Dataseries should have equal length")
 
     let res = zip(lhs, rhs).map {
         compactMapValues(lhs: $0.0, rhs: $0.1) { $0 * $1 }
@@ -87,10 +109,8 @@ public func * <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>?  whe
     return DataSeries(res)
 }
 
-public func / <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>?  where T: FloatingPoint {
-    guard lhs.count == rhs.count else {
-        return nil
-    }
+public func / <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>  where T: FloatingPoint {
+    assert(lhs.count == rhs.count, "Dataseries should have equal length")
     
     let res = zip(lhs, rhs).map {
         compactMapValues(lhs: $0.0, rhs: $0.1) { $0 / $1 }
@@ -99,23 +119,37 @@ public func / <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>?  whe
     return DataSeries(res)
 }
 
-public func zipSeries<T1, T2, T3>(s1: SeriesArray<T1>, s2: SeriesArray<T2>, s3: SeriesArray<T3>) -> Array<(T1, T2, T3)>? {
-    guard s1.count == s2.count, s2.count == s3.count else {
-        return nil
-    }
+public func zipSeries<T1, T2, T3>(s1: SeriesArray<T1>, s2: SeriesArray<T2>, s3: SeriesArray<T3>) -> Array<(T1, T2, T3)> {
+    assert(s1.count == s2.count, "Dataseries should have equal length")
+    assert(s1.count == s3.count, "Dataseries should have equal length")
 
     return zip(s1, zip(s2, s3)).map { ($0.0, $0.1.0, $0.1.1) }
 }
 
-public func whereCondition<U>(_ condition: DataSeries<Bool>, then trueSeries: DataSeries<U>, else series: DataSeries<U>) -> DataSeries<U>?   {
-    return condition.whereTrue(then: trueSeries, else: series)
+public func whereCondition<U>(_ condition: DataSeries<Bool>?, then trueSeries: DataSeries<U>?, else series: DataSeries<U>?) -> DataSeries<U>?   {
+    return condition?.whereTrue(then: trueSeries, else: series)
+}
+
+public func whereCondition<U>(_ condition: DataSeries<Bool>?, then trueValue: U, else value: U) -> DataSeries<U>?   {
+    guard let condition = condition else {
+        return nil
+    }
+
+    let trueSeries = condition.mapTo(constant: trueValue)
+    let falseSeries = condition.mapTo(constant: value)
+
+    return condition.whereTrue(then: trueSeries, else: falseSeries)
 }
 
 public extension SeriesArray  {
-    func whereTrue<U>(then trueSeries: DataSeries<U>, else series: DataSeries<U>) -> DataSeries<U>? where Element == Bool?  {
-        guard let zip3 = zipSeries(s1: self, s2: trueSeries, s3: series) else {
+    func whereTrue<U>(then trueSeries: DataSeries<U>?, else series: DataSeries<U>?) -> DataSeries<U>? where Element == Bool?  {
+        guard let trueSeries = trueSeries,
+            let series = series
+        else {
             return nil
         }
+
+        let zip3 = zipSeries(s1: self, s2: trueSeries, s3: series)
 
         let resultArray = zip3.map { zipped in zipped.0.map { $0 ? zipped.1 : zipped.2 } ?? nil }
         return DataSeries<U>(resultArray)
@@ -123,11 +157,11 @@ public extension SeriesArray  {
 }
 
 public extension SeriesArray {
-    func fillNils<T>(with value: T) -> DataSeries<T> where Element == T? {
+    func fillNils<T>(with value: Element) -> DataSeries<T> where Element == T? {
         return DataSeries(map { $0 ?? value } )
     }
 
-    func fillNils<T>(method: FillNilsMethod<T>) -> DataSeries<T> where Element == T? {
+    func fillNils<T>(method: FillNilsMethod<Element>) -> DataSeries<T> where Element == T? {
         switch method {
         case .all(let value):
             return fillNils(with: value)
