@@ -32,6 +32,13 @@ public extension DataFrame {
         return mapValues {  $0.mapTo(constant: value)  }
     }
 
+    func mapTo<V, U>(series value: DataSeries<U>) -> DataFrame<Key, U> where Value == DataSeries<V> {
+        return mapValues {
+            assert($0.count == value.count, "DataSeries should have equal length")
+            return value
+        }
+    }
+
     func shiftedBy<V>(_ amount: Int) -> DataFrame<Key, V> where Value == DataSeries<V> {
         return mapValues { $0.shiftedBy(amount) }
     }
