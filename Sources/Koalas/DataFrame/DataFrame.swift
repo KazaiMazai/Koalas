@@ -7,7 +7,7 @@
 
 import Foundation
 
-public typealias DataFrame<K: Hashable, V> = Dictionary<K, DataSeries<V>>
+public typealias DataFrame<K: Hashable, V: Codable> = Dictionary<K, DataSeries<V>>
 
 public enum DataFrameType<DF, V> {
     case df(DF?)
@@ -32,7 +32,11 @@ public extension DataFrame {
         return mapValues {  $0.mapTo(constant: value)  }
     }
 
-    func mapTo<V, U>(series value: DataSeries<U>) -> DataFrame<Key, U> where Value == DataSeries<V> {
+    func mapTo<V, U>(series value: DataSeries<U>?) -> DataFrame<Key, U>? where Value == DataSeries<V> {
+        guard let value = value else {
+            return nil
+        }
+        
         return mapValues {
             assert($0.count == value.count, "DataSeries should have equal length")
             return value

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public typealias DataSeries<T> = SeriesArray<T?>
+public typealias DataSeries<T: Codable> = SeriesArray<T?>
 
 public func compactMapValues<T, U>(lhs: T?, rhs: T?, map: (T, T) -> U?) -> U? {
     guard let lhs = lhs, let rhs = rhs else {
