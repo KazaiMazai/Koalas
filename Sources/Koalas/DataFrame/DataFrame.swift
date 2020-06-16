@@ -7,7 +7,7 @@
 
 import Foundation
 
-public typealias DataFrame<K: Hashable, V> = Dictionary<K, DataSeries<V>>
+public typealias DataFrame<K: Hashable, V: Codable> = Dictionary<K, DataSeries<V>>
 
 public enum DataFrameType<DF, V> {
     case df(DF?)

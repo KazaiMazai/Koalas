@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct SeriesArray<T>: RangeReplaceableCollection {
+public struct SeriesArray<T: Codable>: RangeReplaceableCollection, Codable {
 
     public typealias Element = T
     public typealias Index = Int
