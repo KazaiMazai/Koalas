@@ -260,17 +260,17 @@ public func / <Key, T>(lhs: DataFrame<Key,T>?,
 
 
 extension DataFrame {
-    public func toString<V>(separator: String) -> String where Value == DataSeries<V>, V: LosslessStringConvertible, Key: LosslessStringConvertible {
-
-        var resultString = "\(keys.map { String($0) }.joined(separator: separator))\(separator)"
+    public func toStringLines<V>(separator: String) -> [String] where Value == DataSeries<V>, V: LosslessStringConvertible, Key: LosslessStringConvertible {
+        var resultStringLines: [String] = []
+        resultStringLines.append("\(keys.map { String($0) }.joined(separator: separator))\(separator)")
 
         let height = shape().height
         for idx in 0..<height {
             let lineArr: [String] = values.map { series in series[idx].map { String($0) } ?? "nil" }
             let line = lineArr.joined(separator: separator)
-            resultString.append(" \n\n\(line)\(separator)")
+            resultStringLines.append("\(line)\(separator)")
         }
 
-        return resultString
+        return resultStringLines
     }
 }
