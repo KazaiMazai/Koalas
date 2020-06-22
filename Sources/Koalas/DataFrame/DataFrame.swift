@@ -262,7 +262,7 @@ public func / <Key, T>(lhs: DataFrame<Key,T>?,
 
 
 extension DataFrame {
-    func description<V>(_ separator: String) -> String where Value == DataSeries<V>,
+    func toString<V>(with separator: String) -> String where Value == DataSeries<V>,
         Key: LosslessStringConvertible,
         V: LosslessStringConvertible {
 
