@@ -260,7 +260,7 @@ public func / <Key, T>(lhs: DataFrame<Key,T>?,
 
 
 extension DataFrame {
-    public func toString<V>(with separator: String) -> String where Value == DataSeries<V>, V: LosslessStringConvertible, Key: LosslessStringConvertible {
+    public func toString<V>(separator: String) -> String where Value == DataSeries<V>, V: LosslessStringConvertible, Key: LosslessStringConvertible {
 
         var resultString = keys.map { String($0) }.joined(separator: separator)
 
