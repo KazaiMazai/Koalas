@@ -268,7 +268,7 @@ extension DataFrame {
         for idx in 0..<height {
             let lineArr: [String] = values.map { series in series[idx].map { String($0) } ?? "nil" }
             let line = lineArr.joined(separator: separator)
-            resultString.append("\n\(line)")
+            resultString.append(" \n\n\(line)")
         }
 
         return resultString
