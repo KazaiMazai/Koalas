@@ -259,3 +259,22 @@ public func / <Key, T>(lhs: DataFrame<Key,T>?,
                        rhs: DataFrame<Key,T>?) -> DataFrame<Key,T>?  where T: FloatingPoint {
     compactMapValues(lhs: lhs, rhs: rhs) { $0 / $1 }
 }
+
+
+extension DataFrame {
+    func description<V>(_ separator: String) -> String where Value == DataSeries<V>,
+        Key: LosslessStringConvertible,
+        V: LosslessStringConvertible {
+
+        var resultString = keys.map { String($0) }.joined(separator: separator)
+
+        let height = shape().height
+        for idx in 0..<height {
+            let lineArr: [String] = values.map { series in series[idx].map { String($0) } ?? "nil" }
+            let line = lineArr.joined(separator: separator)
+            resultString.append("\n\(line)")
+        }
+
+        return resultString
+    }
+}
