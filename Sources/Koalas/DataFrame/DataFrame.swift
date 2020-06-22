@@ -145,7 +145,7 @@ public func != <Key, T: Equatable>(lhs: DataFrame<Key,T>,
     var res = DataFrame<Key, Bool>()
 
     lhs.forEach {
-        res[$0.key] = compactMapValues(lhs: $0.value, rhs: rhs[$0.key]) { $0 == $1 }
+        res[$0.key] = compactMapValues(lhs: $0.value, rhs: rhs[$0.key]) { $0 != $1 }
     }
 
     return res
