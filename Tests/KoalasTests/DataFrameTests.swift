@@ -62,7 +62,7 @@ final class DataFrameTests: XCTestCase {
 
         let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
         let df2 = df1.mapTo(constant: constant)
- 
+
         df2.forEach {
             XCTAssertEqual($0.value.count, s1.count)
 
@@ -373,6 +373,67 @@ final class DataFrameTests: XCTestCase {
         }
 
         try fileManager.removeItem(at: fileURL)
+    }
+
+
+    func test_toDateComponents() {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy/MM/dd"
+
+        let years = [2011, 2019, 2020]
+        let months = [1, 2, 3]
+        let days = [3, 4, 5]
+
+        let s1 = DataSeries([
+            dateFormatter.date(from: "\(years[0])/\(months[0])/\(days[0])"),
+            dateFormatter.date(from: "\(years[1])/\(months[1])/\(days[1])"),
+            dateFormatter.date(from: "\(years[2])/\(months[2])/\(days[2])")
+        ])
+
+        let s2 = DataSeries(s1.reversed())
+
+        let df = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
+
+        let yearDF = DataFrame<String, Int>(uniqueKeysWithValues: [
+            ("1", DataSeries(years)),
+            ("2", DataSeries(years.reversed()))
+        ])
+
+        let monthDF = DataFrame<String, Int>(uniqueKeysWithValues: [
+            ("1", DataSeries(months)),
+            ("2", DataSeries(months.reversed()))
+        ])
+
+        let dayDF = DataFrame<String, Int>(uniqueKeysWithValues: [
+            ("1", DataSeries(days)),
+            ("2", DataSeries(days.reversed()))
+        ])
+
+        let dateComponentsPanel = df.toDateComponents()
+
+        yearDF.forEach { key, value in
+            XCTAssertEqual(dateComponentsPanel[.year]?[key]?.count, value.count)
+
+            value.enumerated().forEach {
+                XCTAssertEqual($0.element, dateComponentsPanel[.year]?[key]?[$0.offset])
+            }
+        }
+
+        monthDF.forEach { key, value in
+            XCTAssertEqual(dateComponentsPanel[.month]?[key]?.count, value.count)
+
+            value.enumerated().forEach {
+                XCTAssertEqual($0.element, dateComponentsPanel[.month]?[key]?[$0.offset])
+            }
+        }
+
+        dayDF.forEach { key, value in
+            XCTAssertEqual(dateComponentsPanel[.day]?[key]?.count, value.count)
+
+            value.enumerated().forEach {
+                XCTAssertEqual($0.element, dateComponentsPanel[.day]?[key]?[$0.offset])
+            }
+        }
     }
 
 }
