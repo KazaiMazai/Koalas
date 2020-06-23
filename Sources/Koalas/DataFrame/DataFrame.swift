@@ -16,7 +16,7 @@ public enum DataFrameType<DF, V> {
     func toDataframeWithShape<Key, T>(of dataframe: DataFrame<Key, T>) -> DataFrame<Key, V>? where DF == DataFrame<Key, V> {
         switch self {
         case .df(let df):
-          return df
+            return df
         case .value(let scalarValue):
             return dataframe.mapValues { DataSeries($0.map { _ in return scalarValue }) }
         }
@@ -24,6 +24,14 @@ public enum DataFrameType<DF, V> {
 }
 
 public extension DataFrame {
+    func upscaleTransform<V, U, Key2>(transform: (DataSeries<V>) -> DataFrame<Key2, U>) -> DataPanel<Key2, Key, U> where Value == DataSeries<V> {
+
+        let keyValues = map { ($0.key, transform($0.value)) }
+        let dataPanel = DataPanel<Key, Key2, U>(uniqueKeysWithValues: keyValues)
+
+        return dataPanel.transposed()
+    }
+
     func flatMapValues<V, U>(transform: (V?) -> U?) -> DataFrame<Key, U> where Value == DataSeries<V> {
         return mapValues { series in DataSeries(series.map { transform($0) }) }
     }
@@ -89,7 +97,7 @@ public func whereCondition<Key, T>(_ condition: DataFrame<Key, Bool>?,
     guard let condition = condition,
         let trueDataFrame = trueDataFrame,
         let dataframe = dataframe
-    else {
+        else {
             return nil
     }
 
@@ -124,7 +132,7 @@ public func + <Key, T: Numeric>(lhs: DataFrame<Key,T>,
 }
 
 public func == <Key, T: Equatable>(lhs: DataFrame<Key,T>,
-                                 rhs: DataFrame<Key,T>) -> DataFrame<Key, Bool> {
+                                   rhs: DataFrame<Key,T>) -> DataFrame<Key, Bool> {
 
     assert(Set(lhs.keys) == Set(rhs.keys), "Dataframes should have equal keys sets")
 
@@ -138,7 +146,7 @@ public func == <Key, T: Equatable>(lhs: DataFrame<Key,T>,
 }
 
 public func != <Key, T: Equatable>(lhs: DataFrame<Key,T>,
-                                 rhs: DataFrame<Key,T>) -> DataFrame<Key, Bool> {
+                                   rhs: DataFrame<Key,T>) -> DataFrame<Key, Bool> {
 
     assert(Set(lhs.keys) == Set(rhs.keys), "Dataframes should have equal keys sets")
 
@@ -229,12 +237,12 @@ public extension DataFrame {
 }
 
 public func != <Key, T>(lhs: DataFrame<Key,T>?,
-                       rhs: DataFrame<Key,T>?) -> DataFrame<Key, Bool>? where T: Equatable {
+                        rhs: DataFrame<Key,T>?) -> DataFrame<Key, Bool>? where T: Equatable {
     return compactMapValues(lhs: lhs, rhs: rhs) { $0 != $1 }
 }
 
 public func == <Key, T>(lhs: DataFrame<Key,T>?,
-                       rhs: DataFrame<Key,T>?) -> DataFrame<Key, Bool>? where T: Equatable {
+                        rhs: DataFrame<Key,T>?) -> DataFrame<Key, Bool>? where T: Equatable {
     compactMapValues(lhs: lhs, rhs: rhs) { $0 == $1 }
 }
 
@@ -259,18 +267,3 @@ public func / <Key, T>(lhs: DataFrame<Key,T>?,
 }
 
 
-extension DataFrame {
-    func toString<V>(with separator: String) -> String where Value == DataSeries<V> {
-
-        var resultString = keys.map { String(describing: $0) }.joined(separator: separator)
-
-        let height = shape().height
-        for idx in 0..<height {
-            let lineArr: [String] = values.map { series in series[idx].map { String(describing: $0) } ?? "nil" }
-            let line = lineArr.joined(separator: separator)
-            resultString.append("\n\(line)")
-        }
-
-        return resultString
-    }
-}

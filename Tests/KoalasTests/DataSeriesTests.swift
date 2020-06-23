@@ -465,4 +465,29 @@ final class DataSeriesTests: XCTestCase {
         XCTAssertEqual(s1.count, s2.count)
         zip(s2, expectedArr).forEach { XCTAssertEqual($0.0, $0.1) }
     }
+
+    func test_toDateComponents() {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy/MM/dd"
+
+        let years = [2011, 2019, 2020]
+        let months = [1, 2, 3]
+        let days = [3, 4, 5]
+
+        let s1 = DataSeries([
+            dateFormatter.date(from: "\(years[0])/\(months[0])/\(days[0])"),
+            dateFormatter.date(from: "\(years[1])/\(months[1])/\(days[1])"),
+            dateFormatter.date(from: "\(years[2])/\(months[2])/\(days[2])")
+        ])
+
+        let dateComponentsDF = s1.toDateComponents()
+        dateComponentsDF[.year]?.enumerated()
+            .forEach  { XCTAssertEqual($0.element, years[$0.offset]) }
+
+        dateComponentsDF[.month]?.enumerated()
+        .forEach  { XCTAssertEqual($0.element, months[$0.offset]) }
+
+        dateComponentsDF[.day]?.enumerated()
+        .forEach  { XCTAssertEqual($0.element, days[$0.offset]) }
+    }
 }

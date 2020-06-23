@@ -62,14 +62,13 @@ final class DataFrameTests: XCTestCase {
 
         let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
         let df2 = df1.mapTo(constant: constant)
- 
+
         df2.forEach {
             XCTAssertEqual($0.value.count, s1.count)
 
             $0.value.forEach {
                 XCTAssertEqual($0, constant)
             }
-
         }
     }
 
@@ -326,6 +325,115 @@ final class DataFrameTests: XCTestCase {
         let df3 = df1.fillNils(method: .backward(initial: initial))
 
         df3.forEach { kv in zip(df2[kv.key]!, kv.value).forEach { XCTAssertEqual($0.0, $0.1) } }
+    }
+
+    func test_whenDFWithoutNilsWriteToCSV_thenReadEqualDF() throws {
+        let first: Int = 1
+        let last: Int = 20
+
+        let arr = Array(first...last)
+
+        let s1 = DataSeries(arr)
+        let s2 = DataSeries(arr.reversed())
+
+        let fileManager = FileManager.default
+        let fileURL = fileManager.temporaryDirectory.appendingPathComponent("test").appendingPathExtension("csv")
+
+        let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
+        try df1.writeToCSV(file: fileURL.path, columnSeparator: ";")
+
+        let df2: DataFrame<String, Int> = try DataFrame<String, Int>.readFromCSV(file: fileURL.path, columnSeparator: ";")
+        df2.forEach { XCTAssertEqual($0.value.count, s1.count) }
+        df1.forEach {
+            let series = df2[$0.key]
+            $0.value.enumerated().forEach { XCTAssertEqual($0.element!, series?[$0.offset])  }
+        }
+
+        try fileManager.removeItem(at: fileURL)
+    }
+
+    func test_whenDFWithNilsWriteToCSV_thenReadEqualDF() throws {
+        
+        let arr = [1, 2, nil, 3, nil, 4, nil, 5, nil, nil, nil]
+
+        let s1 = DataSeries(arr)
+        let s2 = DataSeries(arr.reversed())
+
+        let fileManager = FileManager.default
+        let fileURL = fileManager.temporaryDirectory.appendingPathComponent("test").appendingPathExtension("csv")
+
+        let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
+        try df1.writeToCSV(file: fileURL.path, columnSeparator: ";")
+
+        let df2: DataFrame<String, Int> = try DataFrame<String, Int>.readFromCSV(file: fileURL.path, columnSeparator: ";")
+        df2.forEach { XCTAssertEqual($0.value.count, s1.count) }
+        df1.forEach {
+            let series = df2[$0.key]
+            $0.value.enumerated().forEach { XCTAssertEqual($0.element, series?[$0.offset])  }
+        }
+
+        try fileManager.removeItem(at: fileURL)
+    }
+
+
+    func test_toDateComponents() {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy/MM/dd"
+
+        let years = [2011, 2019, 2020]
+        let months = [1, 2, 3]
+        let days = [3, 4, 5]
+
+        let s1 = DataSeries([
+            dateFormatter.date(from: "\(years[0])/\(months[0])/\(days[0])"),
+            dateFormatter.date(from: "\(years[1])/\(months[1])/\(days[1])"),
+            dateFormatter.date(from: "\(years[2])/\(months[2])/\(days[2])")
+        ])
+
+        let s2 = DataSeries(s1.reversed())
+
+        let df = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
+
+        let yearDF = DataFrame<String, Int>(uniqueKeysWithValues: [
+            ("1", DataSeries(years)),
+            ("2", DataSeries(years.reversed()))
+        ])
+
+        let monthDF = DataFrame<String, Int>(uniqueKeysWithValues: [
+            ("1", DataSeries(months)),
+            ("2", DataSeries(months.reversed()))
+        ])
+
+        let dayDF = DataFrame<String, Int>(uniqueKeysWithValues: [
+            ("1", DataSeries(days)),
+            ("2", DataSeries(days.reversed()))
+        ])
+
+        let dateComponentsPanel = df.toDateComponents()
+
+        yearDF.forEach { key, value in
+            XCTAssertEqual(dateComponentsPanel[.year]?[key]?.count, value.count)
+
+            value.enumerated().forEach {
+                XCTAssertEqual($0.element, dateComponentsPanel[.year]?[key]?[$0.offset])
+            }
+        }
+
+        monthDF.forEach { key, value in
+            XCTAssertEqual(dateComponentsPanel[.month]?[key]?.count, value.count)
+
+            value.enumerated().forEach {
+                XCTAssertEqual($0.element, dateComponentsPanel[.month]?[key]?[$0.offset])
+            }
+        }
+
+        dayDF.forEach { key, value in
+            XCTAssertEqual(dateComponentsPanel[.day]?[key]?.count, value.count)
+
+            value.enumerated().forEach {
+                XCTAssertEqual($0.element, dateComponentsPanel[.day]?[key]?[$0.offset])
+            }
+        }
     }
 
 }
