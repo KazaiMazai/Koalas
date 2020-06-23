@@ -8,13 +8,16 @@
 import Foundation
 
 extension DataFrame {
-    public func toStringLines<V>(separator: String) -> [String] where Value == DataSeries<V>, V: LosslessStringConvertible, Key: LosslessStringConvertible {
+    public func toStringRowLines<V>(separator: String) -> [String] where Value == DataSeries<V>, V: LosslessStringConvertible, Key: LosslessStringConvertible {
         var resultStringLines: [String] = []
-        resultStringLines.append("\(keys.map { String($0) }.joined(separator: separator))")
+        let sortedKeys = keys.sorted { return String($0) < String($1) }
+
+        resultStringLines.append("\(sortedKeys.map { String($0) }.joined(separator: separator))")
+        let sortedValues = sortedKeys.map { self[$0] }
 
         let height = shape().height
         for idx in 0..<height {
-            let lineArr: [String] = values.map { series in series[idx].map { String($0) } ?? "nil" }
+            let lineArr: [String] = sortedValues.map { series in series?[idx].map { String($0) } ?? "nil" }
             let line = lineArr.joined(separator: separator)
             resultStringLines.append("\(line)")
         }
@@ -22,14 +25,26 @@ extension DataFrame {
         return resultStringLines
     }
 
-    public func writeToCSV<V>(file: String, atomically: Bool = true, encoding: String.Encoding = .utf8, columnSeparator: String) throws where Value == DataSeries<V>, V: LosslessStringConvertible, Key: LosslessStringConvertible {
-        let dataframeString = toStringLines(separator: columnSeparator).joined(separator: "\n")
+    public func writeToCSV<V>(file: String,
+                              atomically: Bool = true,
+                              encoding: String.Encoding = .utf8,
+                              columnSeparator: String) throws
+        where
+
+        Value == DataSeries<V>,
+        V: LosslessStringConvertible,
+        Key: LosslessStringConvertible {
+
+        let dataframeString = toStringRowLines(separator: columnSeparator).joined(separator: "\n")
         try dataframeString.write(toFile: file, atomically: atomically, encoding: encoding)
     }
 
-    public static func readFromCSV<K, V>(file: String, encoding: String.Encoding = .utf8, columnSeparator: String) throws -> DataFrame<K, V>
+    public static func readFromCSV<K, V>(file: String,
+                                         encoding: String.Encoding = .utf8,
+                                         columnSeparator: String) throws -> DataFrame<K, V>
 
         where
+
         Value == DataSeries<V>,
         V: LosslessStringConvertible,
         K: LosslessStringConvertible,
