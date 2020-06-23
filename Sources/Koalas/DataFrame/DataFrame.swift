@@ -16,7 +16,7 @@ public enum DataFrameType<DF, V> {
     func toDataframeWithShape<Key, T>(of dataframe: DataFrame<Key, T>) -> DataFrame<Key, V>? where DF == DataFrame<Key, V> {
         switch self {
         case .df(let df):
-          return df
+            return df
         case .value(let scalarValue):
             return dataframe.mapValues { DataSeries($0.map { _ in return scalarValue }) }
         }
@@ -89,7 +89,7 @@ public func whereCondition<Key, T>(_ condition: DataFrame<Key, Bool>?,
     guard let condition = condition,
         let trueDataFrame = trueDataFrame,
         let dataframe = dataframe
-    else {
+        else {
             return nil
     }
 
@@ -124,7 +124,7 @@ public func + <Key, T: Numeric>(lhs: DataFrame<Key,T>,
 }
 
 public func == <Key, T: Equatable>(lhs: DataFrame<Key,T>,
-                                 rhs: DataFrame<Key,T>) -> DataFrame<Key, Bool> {
+                                   rhs: DataFrame<Key,T>) -> DataFrame<Key, Bool> {
 
     assert(Set(lhs.keys) == Set(rhs.keys), "Dataframes should have equal keys sets")
 
@@ -138,7 +138,7 @@ public func == <Key, T: Equatable>(lhs: DataFrame<Key,T>,
 }
 
 public func != <Key, T: Equatable>(lhs: DataFrame<Key,T>,
-                                 rhs: DataFrame<Key,T>) -> DataFrame<Key, Bool> {
+                                   rhs: DataFrame<Key,T>) -> DataFrame<Key, Bool> {
 
     assert(Set(lhs.keys) == Set(rhs.keys), "Dataframes should have equal keys sets")
 
@@ -229,12 +229,12 @@ public extension DataFrame {
 }
 
 public func != <Key, T>(lhs: DataFrame<Key,T>?,
-                       rhs: DataFrame<Key,T>?) -> DataFrame<Key, Bool>? where T: Equatable {
+                        rhs: DataFrame<Key,T>?) -> DataFrame<Key, Bool>? where T: Equatable {
     return compactMapValues(lhs: lhs, rhs: rhs) { $0 != $1 }
 }
 
 public func == <Key, T>(lhs: DataFrame<Key,T>?,
-                       rhs: DataFrame<Key,T>?) -> DataFrame<Key, Bool>? where T: Equatable {
+                        rhs: DataFrame<Key,T>?) -> DataFrame<Key, Bool>? where T: Equatable {
     compactMapValues(lhs: lhs, rhs: rhs) { $0 == $1 }
 }
 
@@ -262,15 +262,54 @@ public func / <Key, T>(lhs: DataFrame<Key,T>?,
 extension DataFrame {
     public func toStringLines<V>(separator: String) -> [String] where Value == DataSeries<V>, V: LosslessStringConvertible, Key: LosslessStringConvertible {
         var resultStringLines: [String] = []
-        resultStringLines.append("\(keys.map { String($0) }.joined(separator: separator))\(separator)")
+        resultStringLines.append("\(keys.map { String($0) }.joined(separator: separator))")
 
         let height = shape().height
         for idx in 0..<height {
             let lineArr: [String] = values.map { series in series[idx].map { String($0) } ?? "nil" }
             let line = lineArr.joined(separator: separator)
-            resultStringLines.append("\(line)\(separator)")
+            resultStringLines.append("\(line)")
         }
 
         return resultStringLines
+    }
+
+    public func writeToCSV<V>(file: String, atomically: Bool = true, encoding: String.Encoding = .utf8, columnSeparator: String) throws where Value == DataSeries<V>, V: LosslessStringConvertible, Key: LosslessStringConvertible {
+        let dataframeString = toStringLines(separator: columnSeparator).joined(separator: "\n")
+        try dataframeString.write(toFile: file, atomically: atomically, encoding: encoding)
+    }
+
+    public static func readFromCSV<K, V>(file: String, encoding: String.Encoding = .utf8, columnSeparator: String) throws -> DataFrame<K, V>
+
+        where
+        Value == DataSeries<V>,
+        V: LosslessStringConvertible,
+        K: LosslessStringConvertible,
+        K: Hashable {
+
+            let fileString = try String(contentsOfFile: file, encoding: encoding)
+
+            var df = DataFrame<K, V>()
+            var keys: [K] = []
+
+            var lineNumber = 0
+
+            fileString.enumerateLines { (line, _) in
+                let lineComponents = line.components(separatedBy: columnSeparator)
+                if lineNumber == 0 {
+                    keys = lineComponents
+                        .map { K($0) }
+                        .compactMap { $0 }
+                    
+                    keys.forEach { df[$0] = DataSeries() }
+                } else {
+                    let valuesRow = lineComponents.map { V($0) }
+                    zip(keys, valuesRow).forEach { df[$0]?.append($01) }
+                }
+
+                lineNumber += 1
+            }
+
+            return df
     }
 }

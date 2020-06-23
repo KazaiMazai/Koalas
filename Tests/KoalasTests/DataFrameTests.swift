@@ -69,7 +69,6 @@ final class DataFrameTests: XCTestCase {
             $0.value.forEach {
                 XCTAssertEqual($0, constant)
             }
-
         }
     }
 
@@ -326,6 +325,54 @@ final class DataFrameTests: XCTestCase {
         let df3 = df1.fillNils(method: .backward(initial: initial))
 
         df3.forEach { kv in zip(df2[kv.key]!, kv.value).forEach { XCTAssertEqual($0.0, $0.1) } }
+    }
+
+    func test_whenDFWithoutNilsWriteToCSV_thenReadEqualDF() throws {
+        let first: Int = 1
+        let last: Int = 20
+
+        let arr = Array(first...last)
+
+        let s1 = DataSeries(arr)
+        let s2 = DataSeries(arr.reversed())
+
+        let fileManager = FileManager.default
+        let fileURL = fileManager.temporaryDirectory.appendingPathComponent("test").appendingPathExtension("csv")
+
+        let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
+        try df1.writeToCSV(file: fileURL.path, columnSeparator: ";")
+
+        let df2: DataFrame<String, Int> = try DataFrame<String, Int>.readFromCSV(file: fileURL.path, columnSeparator: ";")
+        df2.forEach { XCTAssertEqual($0.value.count, s1.count) }
+        df1.forEach {
+            let series = df2[$0.key]
+            $0.value.enumerated().forEach { XCTAssertEqual($0.element!, series?[$0.offset])  }
+        }
+
+        try fileManager.removeItem(at: fileURL)
+    }
+
+    func test_whenDFWithNilsWriteToCSV_thenReadEqualDF() throws {
+        
+        let arr = [1, 2, nil, 3, nil, 4, nil, 5, nil, nil, nil]
+
+        let s1 = DataSeries(arr)
+        let s2 = DataSeries(arr.reversed())
+
+        let fileManager = FileManager.default
+        let fileURL = fileManager.temporaryDirectory.appendingPathComponent("test").appendingPathExtension("csv")
+
+        let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
+        try df1.writeToCSV(file: fileURL.path, columnSeparator: ";")
+
+        let df2: DataFrame<String, Int> = try DataFrame<String, Int>.readFromCSV(file: fileURL.path, columnSeparator: ";")
+        df2.forEach { XCTAssertEqual($0.value.count, s1.count) }
+        df1.forEach {
+            let series = df2[$0.key]
+            $0.value.enumerated().forEach { XCTAssertEqual($0.element, series?[$0.offset])  }
+        }
+
+        try fileManager.removeItem(at: fileURL)
     }
 
 }
