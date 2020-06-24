@@ -466,7 +466,7 @@ final class DataSeriesTests: XCTestCase {
         zip(s2, expectedArr).forEach { XCTAssertEqual($0.0, $0.1) }
     }
 
-    func test_toDateComponents() {
+    func test_toDateComponentsFunc() {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy/MM/dd"
 
@@ -489,5 +489,45 @@ final class DataSeriesTests: XCTestCase {
 
         dateComponentsDF[.day]?.enumerated()
         .forEach  { XCTAssertEqual($0.element, days[$0.offset]) }
+    }
+
+    func test_whenSeriesEqual_equalToReturnsTrue() {
+
+        let first: Int = 1
+        let last: Int = 20
+
+        let arr = Array(first...last)
+
+        let s1 = DataSeries(arr)
+        let s2 = DataSeries(arr)
+
+        XCTAssertTrue(s1.equalsTo(series: s2))
+    }
+
+    func test_whenSeriesNotEqual_equalsToReturnsFalse() {
+
+        let first: Int = 1
+        let last: Int = 20
+
+        let arr = Array(first...last)
+
+        let s1 = DataSeries(arr)
+        let s2 = DataSeries(arr.reversed())
+
+        XCTAssertFalse(s1.equalsTo(series: s2))
+    }
+
+    func test_whenSeriesNotEqualLength_equalsToReturnsFalse() {
+
+        let first: Int = 1
+        let last: Int = 20
+
+        let arr = Array(first...last)
+        let arr2 = Array(first..<last)
+
+        let s1 = DataSeries(arr)
+        let s2 = DataSeries(arr2)
+
+        XCTAssertFalse(s1.equalsTo(series: s2))
     }
 }
