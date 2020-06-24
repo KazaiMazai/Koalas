@@ -436,4 +436,52 @@ final class DataFrameTests: XCTestCase {
         }
     }
 
+
+    func test_whenSeriesEqual_equalToReturnsTrue() {
+
+        let first: Double = 1
+        let last: Double = 20
+
+        let arr = Array(stride(from: first, through: last, by: 1.0))
+
+        let s1 = DataSeries(arr)
+        let s2 = DataSeries(arr.reversed())
+
+        let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
+        let df2 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
+
+        XCTAssertTrue(df1.equalsTo(dataframe: df2))
+    }
+
+    func test_whenSeriesNotEqual_equalsToReturnsFalse() {
+
+        let first: Double = 1
+        let last: Double = 20
+
+        let arr = Array(stride(from: first, through: last, by: 1.0))
+
+        let s1 = DataSeries(arr)
+        let s2 = DataSeries(arr.reversed())
+
+        let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
+        let df2 = DataFrame(dictionaryLiteral: ("1", s2), ("2", s2))
+
+        XCTAssertFalse(df1.equalsTo(dataframe: df2))
+    }
+
+    func test_whenSeriesNotEqualKeys_equalsToReturnsFalse() {
+        let first: Double = 1
+        let last: Double = 20
+
+        let arr = Array(stride(from: first, through: last, by: 1.0))
+
+        let s1 = DataSeries(arr)
+        let s2 = DataSeries(arr)
+
+        let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
+        let df2 = DataFrame(dictionaryLiteral: ("1", s2))
+
+        XCTAssertFalse(df1.equalsTo(dataframe: df2))
+    }
+
 }

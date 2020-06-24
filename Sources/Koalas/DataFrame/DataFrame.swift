@@ -70,6 +70,16 @@ public extension DataFrame {
     func rollingMean<V>(window: Int) -> DataFrame<Key, V> where Value == DataSeries<V>, V: FloatingPoint  {
         return mapValues { $0.rollingMean(window: window) }
     }
+
+
+    func equalsTo<V>(dataframe: DataFrame<Key, V>) -> Bool where Value == DataSeries<V>, V: Equatable {
+        guard Set(self.keys) == Set(dataframe.keys) else {
+            return false
+        }
+
+        return self.first { !$0.value.equalsTo(series: dataframe[$0.key]) } == nil
+    }
+    
 }
 
 public func whereCondition<Key, T>(_ condition: DataFrame<Key, Bool>?,

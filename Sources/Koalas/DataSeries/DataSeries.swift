@@ -89,6 +89,7 @@ public func == <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<Bool>  
 }
 
 
+
 public func - <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>  where T: Numeric {
     assert(lhs.count == rhs.count, "Dataseries should have equal length")
 
@@ -157,6 +158,18 @@ public extension SeriesArray  {
 }
 
 public extension SeriesArray {
+    func equalsTo<T>(series: DataSeries<T>?) -> Bool where Element == T?, T: Equatable {
+        guard let series = series else {
+            return false
+        }
+        
+        guard count == series.count else {
+            return false
+        }
+
+        return zip(self, series).first { $0.0 != $0.1 }  == nil
+    }
+
     func fillNils<T>(with value: Element) -> DataSeries<T> where Element == T? {
         return DataSeries(map { $0 ?? value } )
     }
@@ -269,6 +282,13 @@ public extension SeriesArray {
 
         return DataSeries(res)
     }
+
+//    func cumulativeSum<T>(initial: T) -> DataSeries<T> where Element == T?, T: Numeric {
+//    func scanSeries<T>(initial: T, _ f: (T, Element) -> T)  -> DataSeries<T> where Element == T? {
+//        let res = scan(initial: initial, f)
+//        return DataSeries(res)
+//    }
+
 }
 
 public extension SeriesArray {
