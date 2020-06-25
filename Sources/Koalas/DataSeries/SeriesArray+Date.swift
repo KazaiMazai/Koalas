@@ -31,8 +31,6 @@ public extension SeriesArray where Element == Date? {
         return DataFrame(uniqueKeysWithValues: [(.year, yearSeries),
                                                 (.month, monthSeries),
                                                 (.day, daySeries)])
-
-         
     }
 
 }
