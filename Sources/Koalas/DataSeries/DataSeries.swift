@@ -146,8 +146,8 @@ public extension SeriesArray  {
     func whereTrue<U>(then trueSeries: DataSeries<U>?, else series: DataSeries<U>?) -> DataSeries<U>? where Element == Bool?  {
         guard let trueSeries = trueSeries,
             let series = series
-        else {
-            return nil
+            else {
+                return nil
         }
 
         let zip3 = zipSeries(s1: self, s2: trueSeries, s3: series)
@@ -158,7 +158,7 @@ public extension SeriesArray  {
 }
 
 public extension SeriesArray {
-    func equalsTo<T>(series: DataSeries<T>?) -> Bool where Element == T?, T: Equatable {
+    func equalsTo<T>(series: DataSeries<T>?) -> Bool where Element == T?, T: FloatingPoint {
         guard let series = series else {
             return false
         }
@@ -167,7 +167,19 @@ public extension SeriesArray {
             return false
         }
 
-        return zip(self, series).first { $0.0 != $0.1 }  == nil
+        return zip(self, series).first { !isElementEqual(lhs: $0.0, rhs: $0.1) }  == nil
+    }
+
+    func equalsTo<T>(series: DataSeries<T>?) -> Bool where Element == T?, T: Numeric {
+        guard let series = series else {
+            return false
+        }
+
+        guard count == series.count else {
+            return false
+        }
+
+        return zip(self, series).first { !isElementEqual(lhs: $0.0, rhs: $0.1) }  == nil
     }
 
     func fillNils<T>(with value: Element) -> DataSeries<T> where Element == T? {
@@ -283,11 +295,11 @@ public extension SeriesArray {
         return DataSeries(res)
     }
 
-//    func cumulativeSum<T>(initial: T) -> DataSeries<T> where Element == T?, T: Numeric {
-//    func scanSeries<T>(initial: T, _ f: (T, Element) -> T)  -> DataSeries<T> where Element == T? {
-//        let res = scan(initial: initial, f)
-//        return DataSeries(res)
-//    }
+    //    func cumulativeSum<T>(initial: T) -> DataSeries<T> where Element == T?, T: Numeric {
+    //    func scanSeries<T>(initial: T, _ f: (T, Element) -> T)  -> DataSeries<T> where Element == T? {
+    //        let res = scan(initial: initial, f)
+    //        return DataSeries(res)
+    //    }
 
 }
 
@@ -313,6 +325,9 @@ public extension SeriesArray {
 }
 
 public extension SeriesArray {
+
+
+
     func scan<T>(initial: T, _ f: (T, Element) -> T) -> [T] {
         var result = self.reduce([initial]) { (listSoFar: [T], next: Element) -> [T] in
             let lastElement = listSoFar.last ?? initial
@@ -342,4 +357,29 @@ public extension SeriesArray {
         result.removeFirst()
         return result.map { windowFunc($0) }
     }
+}
+
+
+fileprivate func isElementEqual<T>(lhs: T?, rhs: T?) -> Bool where T: FloatingPoint {
+    if lhs == nil && rhs == nil {
+        return true
+    }
+
+    guard let lhs = lhs, let rhs = rhs else {
+        return false
+    }
+
+    return lhs.isEqual(to: rhs)
+}
+
+fileprivate func isElementEqual<T>(lhs: T?, rhs: T?) -> Bool where T: Numeric {
+    if lhs == nil && rhs == nil {
+        return true
+    }
+
+    guard let lhs = lhs, let rhs = rhs else {
+        return false
+    }
+
+    return lhs == rhs
 }

@@ -485,10 +485,10 @@ final class DataSeriesTests: XCTestCase {
             .forEach  { XCTAssertEqual($0.element, years[$0.offset]) }
 
         dateComponentsDF[.month]?.enumerated()
-        .forEach  { XCTAssertEqual($0.element, months[$0.offset]) }
+            .forEach  { XCTAssertEqual($0.element, months[$0.offset]) }
 
         dateComponentsDF[.day]?.enumerated()
-        .forEach  { XCTAssertEqual($0.element, days[$0.offset]) }
+            .forEach  { XCTAssertEqual($0.element, days[$0.offset]) }
     }
 
     func test_whenSeriesEqual_equalToReturnsTrue() {
@@ -500,6 +500,21 @@ final class DataSeriesTests: XCTestCase {
 
         let s1 = DataSeries(arr)
         let s2 = DataSeries(arr)
+
+        XCTAssertTrue(s1.equalsTo(series: s2))
+    }
+
+    func test_whenFloatingPointSeriesEqual_equalToReturnsTrue() {
+
+        let first: Double = 1
+        let last: Double = 20
+
+        let arr = Array(stride(from: first, through: last, by: 1.0))
+        let arr2 = Array(stride(from: first, through: last, by: 1.0))
+
+
+        let s1 = DataSeries(arr)
+        let s2 = DataSeries(arr2)
 
         XCTAssertTrue(s1.equalsTo(series: s2))
     }

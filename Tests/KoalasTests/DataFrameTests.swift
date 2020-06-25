@@ -436,8 +436,23 @@ final class DataFrameTests: XCTestCase {
         }
     }
 
+    func test_whenDFIntEqual_equalToReturnsTrue() {
 
-    func test_whenSeriesEqual_equalToReturnsTrue() {
+        let first: Int = 1
+        let last: Int = 20
+
+        let arr = Array(first...last)
+
+        let s1 = DataSeries(arr)
+        let s2 = DataSeries(arr.reversed())
+
+        let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
+        let df2 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
+
+        XCTAssertTrue(df1.equalsTo(dataframe: df2))
+    }
+
+    func test_whenDFEqual_equalToReturnsTrue() {
 
         let first: Double = 1
         let last: Double = 20
@@ -453,7 +468,9 @@ final class DataFrameTests: XCTestCase {
         XCTAssertTrue(df1.equalsTo(dataframe: df2))
     }
 
-    func test_whenSeriesNotEqual_equalsToReturnsFalse() {
+
+    
+    func test_whenDFNotEqual_equalsToReturnsFalse() {
 
         let first: Double = 1
         let last: Double = 20
@@ -469,7 +486,7 @@ final class DataFrameTests: XCTestCase {
         XCTAssertFalse(df1.equalsTo(dataframe: df2))
     }
 
-    func test_whenSeriesNotEqualKeys_equalsToReturnsFalse() {
+    func test_whenDFNotEqualKeys_equalsToReturnsFalse() {
         let first: Double = 1
         let last: Double = 20
 
