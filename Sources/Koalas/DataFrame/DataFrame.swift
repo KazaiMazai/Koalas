@@ -58,7 +58,7 @@ public extension DataFrame {
     }
 
 
-    func equalsTo<V>(dataframe: DataFrame<Key, V>?) -> Bool where Value == DataSeries<V>, V: Numeric {
+    func equalsTo<V>(dataframe: DataFrame<Key, V>?) -> Bool where Value == DataSeries<V>, V: Equatable {
         guard let dataframe = dataframe else {
             return false
         }

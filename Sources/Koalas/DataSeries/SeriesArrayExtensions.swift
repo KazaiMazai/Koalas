@@ -23,6 +23,18 @@ public extension SeriesArray  {
 }
 
 public extension SeriesArray {
+    func equalsTo<T>(series: DataSeries<T>?) -> Bool where Element == T?, T: Equatable {
+        guard let series = series else {
+            return false
+        }
+
+        guard count == series.count else {
+            return false
+        }
+
+        return zip(self, series).first { !isElementEqual(lhs: $0.0, rhs: $0.1) }  == nil
+    }
+
     func equalsTo<T>(series: DataSeries<T>?) -> Bool where Element == T?, T: FloatingPoint {
         guard let series = series else {
             return false
@@ -224,7 +236,7 @@ fileprivate func isElementEqual<T>(lhs: T?, rhs: T?) -> Bool where T: FloatingPo
     return lhs.isEqual(to: rhs)
 }
 
-fileprivate func isElementEqual<T>(lhs: T?, rhs: T?) -> Bool where T: Numeric {
+fileprivate func isElementEqual<T>(lhs: T?, rhs: T?) -> Bool where T: Equatable {
     if lhs == nil && rhs == nil {
         return true
     }
