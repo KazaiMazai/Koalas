@@ -72,11 +72,23 @@ public extension DataFrame {
     }
 
 
-    func equalsTo<V>(dataframe: DataFrame<Key, V>?) -> Bool where Value == DataSeries<V>, V: Equatable {
+    func equalsTo<V>(dataframe: DataFrame<Key, V>?) -> Bool where Value == DataSeries<V>, V: Numeric {
         guard let dataframe = dataframe else {
             return false
         }
         
+        guard Set(self.keys) == Set(dataframe.keys) else {
+            return false
+        }
+
+        return self.first { !$0.value.equalsTo(series: dataframe[$0.key]) } == nil
+    }
+
+    func equalsTo<V>(dataframe: DataFrame<Key, V>?) -> Bool where Value == DataSeries<V>, V: FloatingPoint {
+        guard let dataframe = dataframe else {
+            return false
+        }
+
         guard Set(self.keys) == Set(dataframe.keys) else {
             return false
         }
