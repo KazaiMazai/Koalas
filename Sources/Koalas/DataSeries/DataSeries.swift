@@ -288,19 +288,11 @@ public extension SeriesArray {
                 return nil
             }
 
-
             return windowArray.reduce(0) { $0 + ($1 ?? 0) } / T(windowArray.count)
         }
 
         return DataSeries(res)
     }
-
-    //    func cumulativeSum<T>(initial: T) -> DataSeries<T> where Element == T?, T: Numeric {
-    //    func scanSeries<T>(initial: T, _ f: (T, Element) -> T)  -> DataSeries<T> where Element == T? {
-    //        let res = scan(initial: initial, f)
-    //        return DataSeries(res)
-    //    }
-
 }
 
 public extension SeriesArray {
@@ -325,9 +317,6 @@ public extension SeriesArray {
 }
 
 public extension SeriesArray {
-
-
-
     func scan<T>(initial: T, _ f: (T, Element) -> T) -> [T] {
         var result = self.reduce([initial]) { (listSoFar: [T], next: Element) -> [T] in
             let lastElement = listSoFar.last ?? initial
@@ -351,14 +340,12 @@ public extension SeriesArray {
         var result = reduce([initialWindowArray]) { (listSoFar: [[Element]], next: Element) -> [[Element]] in
             let lastElement = listSoFar.last ?? initialWindowArray
             return listSoFar + [f(lastElement, next)]
-
         }
 
         result.removeFirst()
         return result.map { windowFunc($0) }
     }
 }
-
 
 fileprivate func isElementEqual<T>(lhs: T?, rhs: T?) -> Bool where T: FloatingPoint {
     if lhs == nil && rhs == nil {
