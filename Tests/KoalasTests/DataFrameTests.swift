@@ -465,7 +465,7 @@ final class DataFrameTests: XCTestCase {
         let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
         let df2 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
 
-        XCTAssertTrue(df1.equalsTo(dataframe: df2))
+        XCTAssertTrue(df1.equalsTo(dataframe: df2, with: 0.000001))
     }
 
 

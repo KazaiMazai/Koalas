@@ -516,7 +516,7 @@ final class DataSeriesTests: XCTestCase {
         let s1 = DataSeries(arr)
         let s2 = DataSeries(arr2)
 
-        XCTAssertTrue(s1.equalsTo(series: s2))
+        XCTAssertTrue(s1.equalsTo(series: s2, with: 0.000001))
     }
 
     func test_whenSeriesNotEqual_equalsToReturnsFalse() {

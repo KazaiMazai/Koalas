@@ -35,7 +35,7 @@ public extension SeriesArray {
         return zip(self, series).first { !isElementEqual(lhs: $0.0, rhs: $0.1) }  == nil
     }
 
-    func equalsTo<T>(series: DataSeries<T>?) -> Bool where Element == T?, T: FloatingPoint {
+    func equalsTo<T>(series: DataSeries<T>?, with precision: T) -> Bool where Element == T?, T: FloatingPoint {
         guard let series = series else {
             return false
         }
@@ -44,7 +44,7 @@ public extension SeriesArray {
             return false
         }
 
-        return zip(self, series).first { !isElementEqual(lhs: $0.0, rhs: $0.1) }  == nil
+        return zip(self, series).first { !isElementEqual(lhs: $0.0, rhs: $0.1, with: precision) }  == nil
     }
 
     func equalsTo<T>(series: DataSeries<T>?) -> Bool where Element == T?, T: Numeric {
@@ -224,7 +224,7 @@ public extension SeriesArray {
     }
 }
 
-fileprivate func isElementEqual<T>(lhs: T?, rhs: T?) -> Bool where T: FloatingPoint {
+fileprivate func isElementEqual<T>(lhs: T?, rhs: T?, with precision: T) -> Bool where T: FloatingPoint {
     if lhs == nil && rhs == nil {
         return true
     }
@@ -233,7 +233,11 @@ fileprivate func isElementEqual<T>(lhs: T?, rhs: T?) -> Bool where T: FloatingPo
         return false
     }
 
-    return lhs.isEqual(to: rhs)
+    guard !lhs.isEqual(to: rhs) else {
+        return true
+    }
+
+    return abs(lhs - rhs) <= precision
 }
 
 fileprivate func isElementEqual<T>(lhs: T?, rhs: T?) -> Bool where T: Equatable {

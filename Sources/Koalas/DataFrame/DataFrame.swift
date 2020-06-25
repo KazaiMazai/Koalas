@@ -70,7 +70,7 @@ public extension DataFrame {
         return self.first { !$0.value.equalsTo(series: dataframe[$0.key]) } == nil
     }
 
-    func equalsTo<V>(dataframe: DataFrame<Key, V>?) -> Bool where Value == DataSeries<V>, V: FloatingPoint {
+    func equalsTo<V>(dataframe: DataFrame<Key, V>?, with precision: V) -> Bool where Value == DataSeries<V>, V: FloatingPoint {
         guard let dataframe = dataframe else {
             return false
         }
@@ -79,7 +79,7 @@ public extension DataFrame {
             return false
         }
 
-        return self.first { !$0.value.equalsTo(series: dataframe[$0.key]) } == nil
+        return self.first { !$0.value.equalsTo(series: dataframe[$0.key], with: precision) } == nil
     }
 }
 
