@@ -9,20 +9,6 @@ import Foundation
 
 public typealias DataFrame<K: Hashable, V: Codable> = Dictionary<K, DataSeries<V>>
 
-public enum DataFrameType<DF, V> {
-    case df(DF?)
-    case value(V?)
-
-    func toDataframeWithShape<Key, T>(of dataframe: DataFrame<Key, T>) -> DataFrame<Key, V>? where DF == DataFrame<Key, V> {
-        switch self {
-        case .df(let df):
-            return df
-        case .value(let scalarValue):
-            return dataframe.mapValues { DataSeries($0.map { _ in return scalarValue }) }
-        }
-    }
-}
-
 public extension DataFrame {
     func upscaleTransform<V, U, Key2>(transform: (DataSeries<V>) -> DataFrame<Key2, U>) -> DataPanel<Key2, Key, U> where Value == DataSeries<V> {
 
@@ -95,7 +81,6 @@ public extension DataFrame {
 
         return self.first { !$0.value.equalsTo(series: dataframe[$0.key]) } == nil
     }
-    
 }
 
 public func whereCondition<Key, T>(_ condition: DataFrame<Key, Bool>?,
@@ -143,90 +128,6 @@ public func whereCondition<Key, T>(_ condition: DataFrame<Key, Bool>?,
 }
 
 
-public func + <Key, T: Numeric>(lhs: DataFrame<Key,T>,
-                                rhs: DataFrame<Key,T>) -> DataFrame<Key,T> {
-
-    assert(Set(lhs.keys) == Set(rhs.keys), "Dataframes should have equal keys sets")
-    
-    var res = DataFrame<Key,T>()
-
-    lhs.forEach {
-        res[$0.key] = compactMapValues(lhs: $0.value, rhs: rhs[$0.key]) { $0 + $1 }
-    }
-
-    return res
-}
-
-public func == <Key, T: Equatable>(lhs: DataFrame<Key,T>,
-                                   rhs: DataFrame<Key,T>) -> DataFrame<Key, Bool> {
-
-    assert(Set(lhs.keys) == Set(rhs.keys), "Dataframes should have equal keys sets")
-
-    var res = DataFrame<Key, Bool>()
-
-    lhs.forEach {
-        res[$0.key] = compactMapValues(lhs: $0.value, rhs: rhs[$0.key]) { $0 == $1 }
-    }
-
-    return res
-}
-
-public func != <Key, T: Equatable>(lhs: DataFrame<Key,T>,
-                                   rhs: DataFrame<Key,T>) -> DataFrame<Key, Bool> {
-
-    assert(Set(lhs.keys) == Set(rhs.keys), "Dataframes should have equal keys sets")
-
-    var res = DataFrame<Key, Bool>()
-
-    lhs.forEach {
-        res[$0.key] = compactMapValues(lhs: $0.value, rhs: rhs[$0.key]) { $0 != $1 }
-    }
-
-    return res
-}
-
-public func - <Key, T: Numeric>(lhs: DataFrame<Key,T>,
-                                rhs: DataFrame<Key,T>) -> DataFrame<Key,T> {
-
-    assert(Set(lhs.keys) == Set(rhs.keys), "Dataframes should have equal keys sets")
-
-    var res = DataFrame<Key,T>()
-
-    lhs.forEach {
-        res[$0.key] = compactMapValues(lhs: $0.value, rhs: rhs[$0.key]) { $0 - $1 }
-    }
-
-    return res
-}
-
-public func * <Key, T: Numeric>(lhs: DataFrame<Key,T>,
-                                rhs: DataFrame<Key,T>) -> DataFrame<Key,T> {
-
-    assert(Set(lhs.keys) == Set(rhs.keys), "Dataframes should have equal keys sets")
-
-    var res = DataFrame<Key,T>()
-
-    lhs.forEach {
-        res[$0.key] = compactMapValues(lhs: $0.value, rhs: rhs[$0.key]) { $0 * $1 }
-    }
-
-    return res
-}
-
-public func / <Key, T: FloatingPoint>(lhs: DataFrame<Key,T>,
-                                      rhs: DataFrame<Key,T>) -> DataFrame<Key,T> {
-    assert(Set(lhs.keys) == Set(rhs.keys), "Dataframes should have equal keys sets")
-
-    var res = DataFrame<Key,T>()
-
-    lhs.forEach {
-        res[$0.key] = compactMapValues(lhs: $0.value, rhs: rhs[$0.key]) { $0 / $1 }
-    }
-
-    return res
-}
-
-
 public extension DataFrame {
     func shape<V>() -> (width: Int, height: Int) where Value == DataSeries<V> {
         return (self.keys.count, self.values.first?.count ?? 0)
@@ -261,35 +162,3 @@ public extension DataFrame {
         mapValues { $0.fillNils(method: method) }
     }
 }
-
-public func != <Key, T>(lhs: DataFrame<Key,T>?,
-                        rhs: DataFrame<Key,T>?) -> DataFrame<Key, Bool>? where T: Equatable {
-    return compactMapValues(lhs: lhs, rhs: rhs) { $0 != $1 }
-}
-
-public func == <Key, T>(lhs: DataFrame<Key,T>?,
-                        rhs: DataFrame<Key,T>?) -> DataFrame<Key, Bool>? where T: Equatable {
-    compactMapValues(lhs: lhs, rhs: rhs) { $0 == $1 }
-}
-
-public func + <Key, T>(lhs: DataFrame<Key,T>?,
-                       rhs: DataFrame<Key,T>?) -> DataFrame<Key,T>? where T: Numeric {
-    compactMapValues(lhs: lhs, rhs: rhs) { $0 + $1 }
-}
-
-public func - <Key, T>(lhs: DataFrame<Key,T>?,
-                       rhs: DataFrame<Key,T>?) -> DataFrame<Key,T>? where T: Numeric {
-    compactMapValues(lhs: lhs, rhs: rhs) { $0 - $1 }
-}
-
-public func * <Key, T>(lhs: DataFrame<Key,T>?,
-                       rhs: DataFrame<Key,T>?) -> DataFrame<Key,T>? where T: Numeric {
-    compactMapValues(lhs: lhs, rhs: rhs) { $0 * $1 }
-}
-
-public func / <Key, T>(lhs: DataFrame<Key,T>?,
-                       rhs: DataFrame<Key,T>?) -> DataFrame<Key,T>?  where T: FloatingPoint {
-    compactMapValues(lhs: lhs, rhs: rhs) { $0 / $1 }
-}
-
-
