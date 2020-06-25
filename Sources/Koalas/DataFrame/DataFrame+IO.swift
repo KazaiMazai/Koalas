@@ -39,14 +39,24 @@ extension DataFrame {
             try dataframeString.write(toFile: toFile, atomically: atomically, encoding: encoding)
     }
 
+    public init<V>(contentsOfFile file: String,
+               encoding: String.Encoding = .utf8,
+               columnSeparator: String) throws
 
+        where
+        Value == DataSeries<V>,
+        V: LosslessStringConvertible,
+        Key: LosslessStringConvertible,
+        Key: Hashable {
 
-    public static func read<K, V>(from file: String,
+        self = try Self.read(from: file, encoding: encoding, columnSeparator: columnSeparator)
+    }
+
+    fileprivate static func read<K, V>(from file: String,
                                          encoding: String.Encoding = .utf8,
                                          columnSeparator: String) throws -> DataFrame<K, V>
 
         where
-
         Value == DataSeries<V>,
         V: LosslessStringConvertible,
         K: LosslessStringConvertible,
