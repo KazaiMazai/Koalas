@@ -137,7 +137,7 @@ public extension SeriesArray {
         return sqrt(squaredStd)
     }
 
-    func cumulativeSum<T>(initial: T) -> DataSeries<T> where Element == T?, T: Numeric {
+    func expandingSum<T>(initial: T) -> DataSeries<T> where Element == T?, T: Numeric {
         let res = scan(initial: initial) {  $0 + ($1 ?? 0) }
         return DataSeries(res)
     }
