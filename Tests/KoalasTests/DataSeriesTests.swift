@@ -153,6 +153,20 @@ final class DataSeriesTests: XCTestCase {
         }
     }
 
+    func test_cumulativeSumWithNilAndInitialNonZero() {
+        let s1 = DataSeries([nil, 1, nil ,nil ,nil ,nil, 1, 1])
+        let cumulativeSum = s1.cumulativeSum(initial: 1)
+
+        XCTAssertEqual(s1.count, cumulativeSum.count)
+
+        cumulativeSum.enumerated().forEach {
+            let idx = $0.offset
+            if idx > 0 {
+                XCTAssertEqual($0.element, (cumulativeSum[idx - 1] ?? 0) + (s1[idx] ?? 0))
+            }
+        }
+    }
+
     func test_whenWindowIsUnderSeriesLength_rollingSumEqualsShiftedSubstractedCumsSums() {
         let first: Int = 1
         let last: Int = 20

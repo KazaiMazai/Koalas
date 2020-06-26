@@ -138,7 +138,7 @@ public extension SeriesArray {
     }
 
     func cumulativeSum<T>(initial: T) -> DataSeries<T> where Element == T?, T: Numeric {
-        let res = scan(initial: initial) {  $0 + ($1 ?? initial) }
+        let res = scan(initial: initial) {  $0 + ($1 ?? 0) }
         return DataSeries(res)
     }
 
