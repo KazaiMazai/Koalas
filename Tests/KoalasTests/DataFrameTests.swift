@@ -340,9 +340,9 @@ final class DataFrameTests: XCTestCase {
         let fileURL = fileManager.temporaryDirectory.appendingPathComponent("test").appendingPathExtension("csv")
 
         let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
-        try df1.writeToCSV(file: fileURL.path, columnSeparator: ";")
+        try df1.write(toFile: fileURL.path, columnSeparator: ";")
 
-        let df2: DataFrame<String, Int> = try DataFrame<String, Int>.readFromCSV(file: fileURL.path, columnSeparator: ";")
+        let df2 = try DataFrame<String, Int>(contentsOfFile: fileURL.path, columnSeparator: ";")
         df2.forEach { XCTAssertEqual($0.value.count, s1.count) }
         df1.forEach {
             let series = df2[$0.key]
@@ -363,9 +363,9 @@ final class DataFrameTests: XCTestCase {
         let fileURL = fileManager.temporaryDirectory.appendingPathComponent("test").appendingPathExtension("csv")
 
         let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
-        try df1.writeToCSV(file: fileURL.path, columnSeparator: ";")
+        try df1.write(toFile: fileURL.path, columnSeparator: ";")
 
-        let df2: DataFrame<String, Int> = try DataFrame<String, Int>.readFromCSV(file: fileURL.path, columnSeparator: ";")
+        let df2 = try DataFrame<String, Int>(contentsOfFile: fileURL.path, columnSeparator: ";")
         df2.forEach { XCTAssertEqual($0.value.count, s1.count) }
         df1.forEach {
             let series = df2[$0.key]
@@ -465,7 +465,7 @@ final class DataFrameTests: XCTestCase {
         let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
         let df2 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
 
-        XCTAssertTrue(df1.equalsTo(dataframe: df2))
+        XCTAssertTrue(df1.equalsTo(dataframe: df2, with: 0.000001))
     }
 
 

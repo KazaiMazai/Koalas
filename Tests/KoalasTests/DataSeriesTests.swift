@@ -18,8 +18,8 @@ final class DataSeriesTests: XCTestCase {
         ("test_whenShiftedOnFullLength_AllNils",
          test_whenShiftedOnFullLength_AllNils),
 
-        ("test_cumulativeSum",
-         test_cumulativeSum),
+        ("test_expandingSum",
+         test_expandingSum),
 
         ("test_whenWindowIsUnderSeriesLength_rollingSumEqualsShiftedSubstractedCumsSums", test_whenWindowIsUnderSeriesLength_rollingSumEqualsShiftedSubstractedCumsSums),
 
@@ -139,16 +139,30 @@ final class DataSeriesTests: XCTestCase {
         XCTAssertTrue(valuesMatch)
     }
 
-    func test_cumulativeSum() {
+    func test_expandingSum() {
         let s1 = DataSeries([1, 2, 3 ,4 ,5 ,6, 7, 8])
-        let cumulativeSum = s1.cumulativeSum(initial: 0)
+        let expandingSum = s1.expandingSum(initial: 0)
 
-        XCTAssertEqual(s1.count, cumulativeSum.count)
+        XCTAssertEqual(s1.count, expandingSum.count)
 
-        cumulativeSum.enumerated().forEach {
+        expandingSum.enumerated().forEach {
             let idx = $0.offset
             if idx > 0 {
-                XCTAssertEqual($0.element, (cumulativeSum[idx - 1] ?? 0) + (s1[idx] ?? 0))
+                XCTAssertEqual($0.element, (expandingSum[idx - 1] ?? 0) + (s1[idx] ?? 0))
+            }
+        }
+    }
+
+    func test_expandingSumWithNilAndInitialNonZero() {
+        let s1 = DataSeries([nil, 1, nil ,nil ,nil ,nil, 1, 1])
+        let expandingSum = s1.expandingSum(initial: 1)
+
+        XCTAssertEqual(s1.count, expandingSum.count)
+
+        expandingSum.enumerated().forEach {
+            let idx = $0.offset
+            if idx > 0 {
+                XCTAssertEqual($0.element, (expandingSum[idx - 1] ?? 0) + (s1[idx] ?? 0))
             }
         }
     }
@@ -163,10 +177,10 @@ final class DataSeriesTests: XCTestCase {
         let s2 = s1.shiftedBy(window)
 
 
-        let cumulativeSum1 = s1.cumulativeSum(initial: 0)
-        let cumulativeSum2 = s2.cumulativeSum(initial: 0)
+        let expandingSum1 = s1.expandingSum(initial: 0)
+        let expandingSum2 = s2.expandingSum(initial: 0)
 
-        var rollingSum1 = cumulativeSum1 - cumulativeSum2
+        var rollingSum1 = expandingSum1 - expandingSum2
 
         /**when index is less then window size, then nil value in rolling sum
          */
@@ -198,10 +212,10 @@ final class DataSeriesTests: XCTestCase {
         let s1 = DataSeries(arr)
 
         let window = arr.count + 1
-        let cumulativeSum1 = s1.cumulativeSum(initial: 0)
-        let cumulativeSum2 = cumulativeSum1.shiftedBy(window)
+        let expandingSum1 = s1.expandingSum(initial: 0)
+        let expandingSum2 = expandingSum1.shiftedBy(window)
 
-        let rollingSum1 = cumulativeSum1 - cumulativeSum2
+        let rollingSum1 = expandingSum1 - expandingSum2
 
         let rollingSum2 = s1.rollingScan(initial: nil, window: window) { (w: [Int?]) -> Int? in
             guard w.allSatisfy({ $0 != nil }) else {
@@ -227,10 +241,10 @@ final class DataSeriesTests: XCTestCase {
         let s1 = DataSeries(arr)
 
         let window = arr.count
-        let cumulativeSum1 = s1.cumulativeSum(initial: 0)
-        var cumulativeSum2 = cumulativeSum1.shiftedBy(window)
-        cumulativeSum2[window - 1] = 0 //otherwise rolling sum at this point would be wrong due to nil
-        let rollingSum1 = cumulativeSum1 - cumulativeSum2
+        let expandingSum1 = s1.expandingSum(initial: 0)
+        var expandingSum2 = expandingSum1.shiftedBy(window)
+        expandingSum2[window - 1] = 0 //otherwise rolling sum at this point would be wrong due to nil
+        let rollingSum1 = expandingSum1 - expandingSum2
 
         let rollingSum2 = s1.rollingScan(initial: nil, window: window) { (w: [Int?]) -> Int? in
             guard w.allSatisfy({ $0 != nil }) else {
@@ -516,7 +530,7 @@ final class DataSeriesTests: XCTestCase {
         let s1 = DataSeries(arr)
         let s2 = DataSeries(arr2)
 
-        XCTAssertTrue(s1.equalsTo(series: s2))
+        XCTAssertTrue(s1.equalsTo(series: s2, with: 0.000001))
     }
 
     func test_whenSeriesNotEqual_equalsToReturnsFalse() {

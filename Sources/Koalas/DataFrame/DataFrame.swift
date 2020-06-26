@@ -41,8 +41,8 @@ public extension DataFrame {
         return mapValues { $0.shiftedBy(amount) }
     }
 
-    func cumulativeSum<V>(initial: V) -> DataFrame<Key, V> where Value == DataSeries<V>, V: Numeric {
-        return mapValues { $0.cumulativeSum(initial: initial) }
+    func expandingSum<V>(initial: V) -> DataFrame<Key, V> where Value == DataSeries<V>, V: Numeric {
+        return mapValues { $0.expandingSum(initial: initial) }
     }
 
     func rollingFunc<V>(initial: V, window: Int, windowFunc: (([V?]) -> V?)) -> DataFrame<Key, V> where Value == DataSeries<V>, V: Numeric  {
@@ -58,7 +58,7 @@ public extension DataFrame {
     }
 
 
-    func equalsTo<V>(dataframe: DataFrame<Key, V>?) -> Bool where Value == DataSeries<V>, V: Numeric {
+    func equalsTo<V>(dataframe: DataFrame<Key, V>?) -> Bool where Value == DataSeries<V>, V: Equatable {
         guard let dataframe = dataframe else {
             return false
         }
@@ -70,7 +70,7 @@ public extension DataFrame {
         return self.first { !$0.value.equalsTo(series: dataframe[$0.key]) } == nil
     }
 
-    func equalsTo<V>(dataframe: DataFrame<Key, V>?) -> Bool where Value == DataSeries<V>, V: FloatingPoint {
+    func equalsTo<V>(dataframe: DataFrame<Key, V>?, with precision: V) -> Bool where Value == DataSeries<V>, V: FloatingPoint {
         guard let dataframe = dataframe else {
             return false
         }
@@ -79,7 +79,7 @@ public extension DataFrame {
             return false
         }
 
-        return self.first { !$0.value.equalsTo(series: dataframe[$0.key]) } == nil
+        return self.first { !$0.value.equalsTo(series: dataframe[$0.key], with: precision) } == nil
     }
 }
 

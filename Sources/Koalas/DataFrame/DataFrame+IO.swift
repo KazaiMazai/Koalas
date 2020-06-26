@@ -25,26 +25,38 @@ extension DataFrame {
         return resultStringLines
     }
 
-    public func writeToCSV<V>(file: String,
-                              atomically: Bool = true,
-                              encoding: String.Encoding = .utf8,
-                              columnSeparator: String) throws
+    public func write<V>(toFile: String,
+                         atomically: Bool = true,
+                         encoding: String.Encoding = .utf8,
+                         columnSeparator: String) throws
         where
 
         Value == DataSeries<V>,
         V: LosslessStringConvertible,
         Key: LosslessStringConvertible {
 
-        let dataframeString = toStringRowLines(separator: columnSeparator).joined(separator: "\n")
-        try dataframeString.write(toFile: file, atomically: atomically, encoding: encoding)
+            let dataframeString = toStringRowLines(separator: columnSeparator).joined(separator: "\n")
+            try dataframeString.write(toFile: toFile, atomically: atomically, encoding: encoding)
     }
 
-    public static func readFromCSV<K, V>(file: String,
+    public init<V>(contentsOfFile file: String,
+               encoding: String.Encoding = .utf8,
+               columnSeparator: String) throws
+
+        where
+        Value == DataSeries<V>,
+        V: LosslessStringConvertible,
+        Key: LosslessStringConvertible,
+        Key: Hashable {
+
+        self = try Self.read(from: file, encoding: encoding, columnSeparator: columnSeparator)
+    }
+
+    fileprivate static func read<K, V>(from file: String,
                                          encoding: String.Encoding = .utf8,
                                          columnSeparator: String) throws -> DataFrame<K, V>
 
         where
-
         Value == DataSeries<V>,
         V: LosslessStringConvertible,
         K: LosslessStringConvertible,
