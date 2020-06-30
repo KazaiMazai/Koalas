@@ -1,3 +1,15 @@
-# Koalas
+<p align="center">
+  <img src="logo.svg?raw=true" alt="Sublime's custom image"/>
+</p>
 
-A description of this package.
+Multidimensional dataseries manipulation library is Swift inspired by Python package named Pandas 
+
+## Features
+
+- DataSeries, DataFrame, DataPanel for 1D, 2D, 3D data sets
+- Missing data handling
+- Automatic and explicit data alignment
+- Memberwise arithmetic operations
+- Flexible reshaping of data sets
+- IO tools: read/write to csv, JSON encoding/decoding
+- Dataseries-specific functionality: rolling window functions, shifting, conditional operations
