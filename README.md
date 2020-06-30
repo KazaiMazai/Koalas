@@ -3,9 +3,9 @@
 </p>
 
 
- 
+  
+ Koalas: multidimensional data manipulation library is Swift
 
-# Koalas: multidimensional data manipulation library is Swift
 
 # Features
 
