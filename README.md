@@ -1,10 +1,12 @@
-<p align="center">
+<p align="left">
   <img src="logo.svg?raw=true" alt="Sublime's custom image"/>
 </p>
 
+ 
+ <div align="center">
 
-  
- Koalas: multidimensional data manipulation library is Swift
+## Multidimensional data manipulation library is Swift
+</div>
 
 
 # Features
