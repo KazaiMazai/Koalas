@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.svg?raw=true" alt="Sublime's custom image"/>
+  <img src="Logo.svg?raw=true" alt="Sublime's custom image"/>
 </p>
 
 Multidimensional dataseries manipulation library is Swift
