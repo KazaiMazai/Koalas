@@ -2,11 +2,10 @@
   <img src="logo.svg?raw=true" alt="Sublime's custom image"/>
 </p>
 
- 
- <div align="center">
+  
 
 ## Multidimensional data manipulation library is Swift
-</div>
+ 
 
 
 # Features
