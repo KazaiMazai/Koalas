@@ -4,7 +4,7 @@
 
   
 
-## Multidimensional data manipulation library is Swift
+## Multidimensional data manipulation library in Swift
  
 
 
