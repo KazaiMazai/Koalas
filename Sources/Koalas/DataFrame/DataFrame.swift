@@ -37,8 +37,8 @@ public extension DataFrame {
         }
     }
 
-    func scan<T, V>(initial: T?, _ f: (T?, V?) -> T?) -> DataFrame<Key, T> where Value == DataSeries<V>, V: Numeric  {
-        return mapValues { $0.scanSeries(initial: initial, f) }
+    func scan<T, V>(initial: T?, _ nextPartialResult: (T?, V?) -> T?) -> DataFrame<Key, T> where Value == DataSeries<V>, V: Numeric  {
+        return mapValues { $0.scanSeries(initial: initial, nextPartialResult) }
     }
 
     func shiftedBy<V>(_ amount: Int) -> DataFrame<Key, V> where Value == DataSeries<V> {

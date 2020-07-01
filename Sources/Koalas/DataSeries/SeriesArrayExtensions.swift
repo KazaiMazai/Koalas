@@ -171,8 +171,8 @@ public extension SeriesArray {
         return DataSeries(res)
     }
 
-    func scanSeries<T, U>(initial: T?, _ f: (T?, U?) -> T?) -> DataSeries<T> where Element == U? {
-        let res = scan(initial: initial, f)
+    func scanSeries<T, U>(initial: T?, _ nextPartialResult: (_ current: T?, _ next: U?) -> T?) -> DataSeries<T> where Element == U? {
+        let res = scan(initial: initial, nextPartialResult)
         return DataSeries(res)
     }
 }
