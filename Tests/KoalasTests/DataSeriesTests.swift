@@ -167,7 +167,7 @@ final class DataSeriesTests: XCTestCase {
         }
     }
 
-    func test_seriesScan() {
+    func test_scanSeries() {
         let s1 = DataSeries([1, 2, 3 ,4 ,5 ,6, 7, 8])
         let expandingSum = s1.scanSeries(initial: 1)  {  ($0 ?? 0) + ($1 ?? 0) }
 
@@ -181,7 +181,7 @@ final class DataSeriesTests: XCTestCase {
         }
     }
 
-    func test_seriesScanWithNilAndInitialNonZero() {
+    func test_scanSeriesWithNilAndInitialNonZero() {
         let s1 = DataSeries([nil, 1, nil ,nil ,nil ,nil, 1, 1])
         let expandingSum = s1.scanSeries(initial: 1)  {  ($0 ?? 0) + ($1 ?? 0) }
         XCTAssertEqual(s1.count, expandingSum.count)
