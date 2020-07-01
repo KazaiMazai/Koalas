@@ -1,10 +1,14 @@
-<p align="center">
+<p align="left">
   <img src="logo.svg?raw=true" alt="Sublime's custom image"/>
 </p>
 
-Multidimensional dataseries manipulation library is Swift
+  
 
-## Features
+## Multidimensional data manipulation library in Swift
+ 
+
+
+# Features
 
 - DataSeries, DataFrame, DataPanel for 1D, 2D, 3D data sets
 - Missing data handling
@@ -12,4 +16,8 @@ Multidimensional dataseries manipulation library is Swift
 - Memberwise arithmetic operations
 - Flexible reshaping of data sets
 - IO tools: read/write to csv, JSON encoding/decoding
-- Dataseries-specific functionality: rolling window functions, shifting, conditional operations
+- Data series-specific functionality: rolling window functions, shifting, conditional operations
+
+# Licensing
+
+Koalas is licensed under MIT license.
