@@ -170,6 +170,11 @@ public extension SeriesArray {
 
         return DataSeries(res)
     }
+
+    func scanSeries<T, U>(initial: T?, _ nextPartialResult: (_ current: T?, _ next: U?) -> T?) -> DataSeries<T> where Element == U? {
+        let res = scan(initial: initial, nextPartialResult)
+        return DataSeries(res)
+    }
 }
 
 public extension SeriesArray {
@@ -193,7 +198,7 @@ public extension SeriesArray {
     }
 }
 
-public extension SeriesArray {
+fileprivate extension SeriesArray {
     func scan<T>(initial: T, _ f: (T, Element) -> T) -> [T] {
         var result = self.reduce([initial]) { (listSoFar: [T], next: Element) -> [T] in
             let lastElement = listSoFar.last ?? initial

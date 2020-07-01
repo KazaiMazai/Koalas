@@ -167,6 +167,33 @@ final class DataSeriesTests: XCTestCase {
         }
     }
 
+    func test_scanSeries() {
+        let s1 = DataSeries([1, 2, 3 ,4 ,5 ,6, 7, 8])
+        let expandingSum = s1.scanSeries(initial: 1)  {  ($0 ?? 0) + ($1 ?? 0) }
+
+        XCTAssertEqual(s1.count, expandingSum.count)
+
+        expandingSum.enumerated().forEach {
+            let idx = $0.offset
+            if idx > 0 {
+                XCTAssertEqual($0.element, (expandingSum[idx - 1] ?? 0) + (s1[idx] ?? 0))
+            }
+        }
+    }
+
+    func test_scanSeriesWithNilAndInitialNonZero() {
+        let s1 = DataSeries([nil, 1, nil ,nil ,nil ,nil, 1, 1])
+        let expandingSum = s1.scanSeries(initial: 1)  {  ($0 ?? 0) + ($1 ?? 0) }
+        XCTAssertEqual(s1.count, expandingSum.count)
+
+        expandingSum.enumerated().forEach {
+            let idx = $0.offset
+            if idx > 0 {
+                XCTAssertEqual($0.element, (expandingSum[idx - 1] ?? 0) + (s1[idx] ?? 0))
+            }
+        }
+    }
+
     func test_whenWindowIsUnderSeriesLength_rollingSumEqualsShiftedSubstractedCumsSums() {
         let first: Int = 1
         let last: Int = 20
@@ -186,7 +213,7 @@ final class DataSeriesTests: XCTestCase {
          */
         rollingSum1.replaceSubrange(0..<window-1, with: DataSeries(repeating: nil, count: window-1))
 
-        let rollingSum2 = s1.rollingScan(initial: nil, window: window) { (w: [Int?]) -> Int? in
+        let rollingSum2 = s1.rollingFunc(initial: nil, window: window) { (w: [Int?]) -> Int? in
             /**when array of values is less then window size, then nil value in rolling sum
              */
             guard w.allSatisfy({ $0 != nil }) else {
@@ -217,7 +244,7 @@ final class DataSeriesTests: XCTestCase {
 
         let rollingSum1 = expandingSum1 - expandingSum2
 
-        let rollingSum2 = s1.rollingScan(initial: nil, window: window) { (w: [Int?]) -> Int? in
+        let rollingSum2 = s1.rollingFunc(initial: nil, window: window) { (w: [Int?]) -> Int? in
             guard w.allSatisfy({ $0 != nil }) else {
                 return nil
             }
@@ -246,7 +273,7 @@ final class DataSeriesTests: XCTestCase {
         expandingSum2[window - 1] = 0 //otherwise rolling sum at this point would be wrong due to nil
         let rollingSum1 = expandingSum1 - expandingSum2
 
-        let rollingSum2 = s1.rollingScan(initial: nil, window: window) { (w: [Int?]) -> Int? in
+        let rollingSum2 = s1.rollingFunc(initial: nil, window: window) { (w: [Int?]) -> Int? in
             guard w.allSatisfy({ $0 != nil }) else {
                 return nil
             }
