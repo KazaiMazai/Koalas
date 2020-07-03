@@ -16,7 +16,7 @@
 - Memberwise arithmetic operations
 - Flexible reshaping of data sets
 - IO tools: read/write to csv, JSON encoding/decoding
-- Data series-specific functionality: rolling window functions, shifting, conditional operations
+- Data series-specific functionality: rolling and expanding window functions, shifting, conditional operations
 
 # Licensing
 
