@@ -123,9 +123,9 @@ public func whereCondition<Key, T>(_ condition: DataFrame<Key, Bool>?,
     var res = DataFrame<Key,T>()
 
     keysSet.forEach { key in
-        res[key] = compactMapValues(condition[key],
-                                    trueDataFrame[key],
-                                    dataframe[key]) { return whereCondition($0, then: $1, else: $2)  }
+        res[key] = unwrap(condition[key],
+                          trueDataFrame[key],
+                          dataframe[key]) { return whereCondition($0, then: $1, else: $2)  }
     }
 
     return res

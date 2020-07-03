@@ -7,7 +7,7 @@
 
 import Foundation
 
-public func compactMapValues<T, U>(lhs: T?, rhs: T?, map: (T, T) -> U) -> U? {
+public func unwrap<T, U>(_ lhs: T?, _ rhs: T?, map: (T, T) -> U) -> U? {
     guard let lhs = lhs, let rhs = rhs else {
         return nil
     }
@@ -15,7 +15,7 @@ public func compactMapValues<T, U>(lhs: T?, rhs: T?, map: (T, T) -> U) -> U? {
     return map(lhs, rhs)
 }
 
-public func compactMapValues<T, U, V>(lhs: T?, rhs: U?, map: (T, U) -> V?) -> V? {
+public func unwrap<T, U, V>(_ lhs: T?, _ rhs: U?, map: (T, U) -> V?) -> V? {
     guard let lhs = lhs, let rhs = rhs else {
         return nil
     }
@@ -23,7 +23,7 @@ public func compactMapValues<T, U, V>(lhs: T?, rhs: U?, map: (T, U) -> V?) -> V?
     return map(lhs, rhs)
 }
 
-public func compactMapValues<T, U, V, S>(_ t: T?, _ u: U?, _ v: V?, map: (T, U, V) -> S?) -> S? {
+public func unwrap<T, U, V, S>(_ t: T?, _ u: U?, _ v: V?, map: (T, U, V) -> S?) -> S? {
     guard let t = t, let u = u, let v = v else {
         return nil
     }
@@ -31,7 +31,7 @@ public func compactMapValues<T, U, V, S>(_ t: T?, _ u: U?, _ v: V?, map: (T, U, 
     return map(t, u, v)
 }
 
-public func compactMapValue<T, U>(value: T?, map: (T) -> U?) -> U? {
+public func unwrap<T, U>(value: T?, map: (T) -> U?) -> U? {
     guard let value = value else {
         return nil
     }
