@@ -28,7 +28,7 @@ public func whereCondition<U>(_ condition: DataSeries<Bool>?, then trueValue: U,
     return condition.whereTrue(then: trueSeries, else: falseSeries)
 }
 
-public func zipSeries<T1, T2, T3>(s1: DataSeries<T1>?, s2: DataSeries<T2>?, s3: DataSeries<T3>?) -> DataSeries<Tuple3<T1?, T2?, T3?>>? {
+public func zipSeries<T1, T2, T3>(_ s1: DataSeries<T1>?, _ s2: DataSeries<T2>?, _ s3: DataSeries<T3>?) -> DataSeries<Tuple3<T1?, T2?, T3?>>? {
     guard let s1 = s1,
         let s2 = s2,
         let s3 = s3
@@ -43,7 +43,7 @@ public func zipSeries<T1, T2, T3>(s1: DataSeries<T1>?, s2: DataSeries<T2>?, s3: 
     return DataSeries(result)
 }
 
-public func zipSeries<T1, T2>(s1: DataSeries<T1>?, s2: DataSeries<T2>?) -> DataSeries<Tuple2<T1?, T2?>>? {
+public func zipSeries<T1, T2>(_ s1: DataSeries<T1>?, _ s2: DataSeries<T2>?) -> DataSeries<Tuple2<T1?, T2?>>? {
     guard let s1 = s1,
         let s2 = s2
     else {
