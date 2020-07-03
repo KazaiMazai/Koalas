@@ -15,6 +15,14 @@ public func compactMapValues<T, U>(lhs: T?, rhs: T?, map: (T, T) -> U) -> U? {
     return map(lhs, rhs)
 }
 
+public func compactMapValues<T, U, V>(lhs: T?, rhs: U?, map: (T, U) -> V?) -> V? {
+    guard let lhs = lhs, let rhs = rhs else {
+        return nil
+    }
+
+    return map(lhs, rhs)
+}
+
 public func compactMapValues<T, U, V, S>(_ t: T?, _ u: U?, _ v: V?, map: (T, U, V) -> S?) -> S? {
     guard let t = t, let u = u, let v = v else {
         return nil
