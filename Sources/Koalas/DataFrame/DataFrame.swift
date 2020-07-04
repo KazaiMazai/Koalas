@@ -10,6 +10,22 @@ import Foundation
 public typealias DataFrame<K: Hashable, V: Codable> = Dictionary<K, DataSeries<V>>
 
 public extension DataFrame {
+    init<S, V>(uniqueKeysWithSeries keysAndValues: S)
+        where
+        S: Sequence,
+        S.Element == (Key, DataSeries<V>),
+        Value == DataSeries<V> {
+
+            let firstDataSeriesCount = keysAndValues.first(where: { _ in true })?.1.count ?? 0
+           
+            let allSeriesCountsAreEqual = keysAndValues.allSatisfy { $0.1.count == firstDataSeriesCount }
+
+            assert(allSeriesCountsAreEqual, "DataSeries should have equal length")
+            self = Dictionary<Key, DataSeries<V>>(uniqueKeysWithValues: keysAndValues)
+    }
+}
+
+public extension DataFrame {
     func upscaleTransform<V, U, Key2>(transform: (DataSeries<V>) -> DataFrame<Key2, U>) -> DataPanel<Key2, Key, U> where Value == DataSeries<V> {
 
         let keyValues = map { ($0.key, transform($0.value)) }
