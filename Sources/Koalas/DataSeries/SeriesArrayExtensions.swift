@@ -15,7 +15,7 @@ public extension SeriesArray  {
                 return nil
         }
 
-        let zip3 = zipSeries(s1: self, s2: trueSeries, s3: series)
+        let zip3 = zipSeriesArray(s1: self, s2: trueSeries, s3: series)
 
         let resultArray = zip3.map { zipped in zipped.0.map { $0 ? zipped.1 : zipped.2 } ?? nil }
         return DataSeries<U>(resultArray)
@@ -257,7 +257,7 @@ fileprivate func isElementEqual<T>(lhs: T?, rhs: T?) -> Bool where T: Equatable 
     return lhs == rhs
 }
 
-public func zipSeries<T1, T2, T3>(s1: SeriesArray<T1>, s2: SeriesArray<T2>, s3: SeriesArray<T3>) -> Array<(T1, T2, T3)> {
+func zipSeriesArray<T1, T2, T3>(s1: SeriesArray<T1>, s2: SeriesArray<T2>, s3: SeriesArray<T3>) -> Array<(T1, T2, T3)> {
     assert(s1.count == s2.count, "Dataseries should have equal length")
     assert(s1.count == s3.count, "Dataseries should have equal length")
 

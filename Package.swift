@@ -7,6 +7,7 @@ let package = Package(
     name: "Koalas",
     platforms: [
        .macOS(.v10_15),
+       .iOS(.v8)
     ],
 
     products: [

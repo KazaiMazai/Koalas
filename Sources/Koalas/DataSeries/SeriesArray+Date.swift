@@ -24,9 +24,9 @@ public extension SeriesArray where Element == Date? {
         let dayDateFormatter = DateFormatter()
         dayDateFormatter.dateFormat = "dd"
 
-        let yearSeries = DataSeries<Int>(map { compactMapValue(value: $0) { date in Int(yearDateFormatter.string(from: date)) } })
-        let monthSeries = DataSeries<Int>(map { compactMapValue(value: $0) { date in Int(monthDateFormatter.string(from: date)) } })
-        let daySeries = DataSeries<Int>(map { compactMapValue(value: $0) { date in Int(dayDateFormatter.string(from: date)) } })
+        let yearSeries = DataSeries<Int>(map { unwrap(value: $0) { date in Int(yearDateFormatter.string(from: date)) } })
+        let monthSeries = DataSeries<Int>(map { unwrap(value: $0) { date in Int(monthDateFormatter.string(from: date)) } })
+        let daySeries = DataSeries<Int>(map { unwrap(value: $0) { date in Int(dayDateFormatter.string(from: date)) } })
 
         return DataFrame(uniqueKeysWithValues: [(.year, yearSeries),
                                                 (.month, monthSeries),
