@@ -9,47 +9,6 @@ import XCTest
 @testable import Koalas
 
 final class DataFrameTests: XCTestCase {
-    static var allTests = [
-        ("test_whenDFKeysAndSeriesEqual_MemberwiseSum",
-         test_whenDFKeysAndSeriesEqual_MemberwiseSum),
-
-        ("test_whenDFKeysAndSeriesEqual_MemberwiseProd",
-         test_whenDFKeysAndSeriesEqual_MemberwiseProd),
-
-        ("test_whenDFKeysAndSeriesEqual_MemberwiseDiff",
-         test_whenDFKeysAndSeriesEqual_MemberwiseDiff),
-
-        ("test_whenDFKeysAndSeriesEqual_MemberwiseDivision",
-         test_whenDFKeysAndSeriesEqual_MemberwiseDivision),
-
-        ("test_whenMapToContant_equalLengthsAndValueMatch",
-         test_whenMapToContant_equalLengthsAndValueMatch),
-
-        ("test_whenDFContainsNoNils_sum",
-         test_whenDFContainsNoNils_sum),
-
-        ("test_whenDFContainsNils_sumWithIgnoreNils",
-         test_whenDFContainsNils_sumWithIgnoreNils),
-
-        ("test_whenDFContainsNils_sumNotIgnoreNils",
-         test_whenDFContainsNils_sumNotIgnoreNils),
-
-        ("test_whenDFContainsNoNils_columnSum",
-         test_whenDFContainsNoNils_columnSum),
-
-        ("test_whenDFContainsNils_columnSumWithIgnore",
-         test_whenDFContainsNils_columnSumWithIgnore),
-
-        ("test_whenDFContainsNils_columnSumNoIgnoreEqualNil",
-         test_whenDFContainsNils_columnSumNoIgnoreEqualNil),
-
-        ("test_forwardFillNils",
-         test_forwardFillNils),
-
-        ("test_backwardFillNils",
-         test_backwardFillNils)
-    ]
-
     func test_whenMapToContant_equalLengthsAndValueMatch() {
         let first: Int = 1
         let last: Int = 20
