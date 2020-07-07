@@ -514,134 +514,93 @@ final class DataSeriesTests: XCTestCase {
         XCTAssertFalse(s1.equalsTo(series: s2))
     }
 
-    func test_whenAllSetisfy_strictCompare() {
-        let first: Int = 1
-        let last: Int = 20
 
-        let arr = Array(first...last)
 
-        let s1: DataSeries<Int>? = DataSeries(arr)
-        let s2: DataSeries<Int>? = s1?.shiftedBy(1).fillNils(method: .all(value: 0))
 
-        let expectedResultTrue = DataSeries(repeating: true, count: arr.count)
+    func test_strictCompareToConst() {
 
-        let less = expectedResultTrue.equalsTo(series: s2 < s1)
-        XCTAssertTrue(less)
+        let s1: DataSeries<Int>? = DataSeries([1, 2, 3])
+        let constToCompare = 2
 
-        let more = expectedResultTrue.equalsTo(series: s1 > s2)
-        XCTAssertTrue(more)
+        let expectedResult1 = DataSeries([true, false, false])
+        let expectedResult2 = DataSeries([false, false, true])
+
+        XCTAssertTrue(expectedResult1.equalsTo(series: s1 < constToCompare))
+        XCTAssertTrue(expectedResult2.equalsTo(series: s1 > constToCompare))
     }
 
-    func test_whenNotAllSetisfy_strictCompare() {
-        let first: Int = 1
-        let last: Int = 20
 
-        let arr = Array(first...last)
+    func test_nonStrictCompareToConst() {
 
-        let s1: DataSeries<Int>? = DataSeries(arr)
-        let s2: DataSeries<Int>? = s1?.shiftedBy(1).fillNils(method: .all(value: 10))
+        let s1: DataSeries<Int>? = DataSeries([1, 2, 3])
+        let constToCompare = 2
 
-        let expectedResultTrue = DataSeries(repeating: true, count: arr.count).setAt(index: 0, value: false)
+        let expectedResult1 = DataSeries([true, true, false])
+        let expectedResult2 = DataSeries([false, true, true])
 
-        let less = expectedResultTrue.equalsTo(series: s2 < s1)
-        XCTAssertTrue(less)
-
-        let more = expectedResultTrue.equalsTo(series: s1 > s2)
-        XCTAssertTrue(more)
+        XCTAssertTrue(expectedResult1.equalsTo(series: s1 <= constToCompare))
+        XCTAssertTrue(expectedResult2.equalsTo(series: s1 >= constToCompare))
     }
 
-    func test_whenNotAllSetisfy_nonStrictCompare() {
-        let first: Int = 1
-        let last: Int = 20
+    func test_equalityCompareToConst() {
+        let s1: DataSeries<Int>? = DataSeries([1, 2, 3])
+        let constToCompare = 2
 
-        let arr = Array(first...last)
+        let expectedResult = DataSeries([false, true, false])
 
-
-        let s1: DataSeries<Int>? = DataSeries(arr)
-        let s2: DataSeries<Int>? = DataSeries(arr).setAt(index: 0, value: 10)
-
-        let expectedResultTrue = DataSeries(repeating: true, count: arr.count).setAt(index: 0, value: false)
-
-        let lessOrEq = expectedResultTrue.equalsTo(series: s2 <= s1)
-        XCTAssertTrue(lessOrEq)
-
-        let moreOrEq = expectedResultTrue.equalsTo(series: s1 >= s2)
-        XCTAssertTrue(moreOrEq)
+        XCTAssertTrue(expectedResult.equalsTo(series: s1 == constToCompare))
     }
 
-    func test_whenAllSetisfy_nonStrictCompare() {
-        let first: Int = 1
-        let last: Int = 20
+    func test_nonEqualityCompareToConst() {
 
-        let arr = Array(first...last)
+        let s1: DataSeries<Int>? = DataSeries([1, 2, 3])
+        let constToCompare = 2
 
+        let expectedResult = DataSeries([true, false, true])
 
-        let s1: DataSeries<Int>? = DataSeries(arr)
-        let s2: DataSeries<Int>? = DataSeries(arr).setAt(index: 0, value: 0)
-
-        let expectedResultTrue = DataSeries(repeating: true, count: arr.count)
-
-        let lessOrEq = expectedResultTrue.equalsTo(series: s2 <= s1)
-        XCTAssertTrue(lessOrEq)
-
-        let moreOrEq = expectedResultTrue.equalsTo(series: s1 >= s2)
-        XCTAssertTrue(moreOrEq)
+        XCTAssertTrue(expectedResult.equalsTo(series: s1 != constToCompare))
     }
 
-    func test_whenAllNotEqual_compareToConstant() {
-        let first: Int = 1
-        let last: Int = 20
+    func test_strictCompare() {
 
-        let arr = Array(first...last)
+        let s1: DataSeries<Int>? = DataSeries([1, 2, 3])
+        let s2: DataSeries<Int>? = DataSeries([2, 2, 2])
 
-        let s1: DataSeries<Int>? = DataSeries(arr)
+        let expectedResult = DataSeries([true, false, false])
 
-        let expectedResultTrue = DataSeries(repeating: true, count: arr.count)
-
-        let allZeros = expectedResultTrue.equalsTo(series: s1 == 0)
-        XCTAssertFalse(allZeros)
+        XCTAssertTrue(expectedResult.equalsTo(series: s1 < s2))
+        XCTAssertTrue(expectedResult.equalsTo(series: s2 > s1))
     }
 
-    func test_whenFirstEqual_compareToConstant() {
-        let first: Int = 1
-        let last: Int = 20
+    func test_nonStrictCompare() {
 
-        let arr = Array(first...last)
+        let s1: DataSeries<Int>? = DataSeries([1, 2, 3])
+        let s2: DataSeries<Int>? = DataSeries([2, 2, 2])
 
-        let s1: DataSeries<Int>? = DataSeries(arr)
+        let expectedResult = DataSeries([true, true, false])
 
-
-        let expectedResultFirstTrue = DataSeries(repeating: false, count: arr.count).setAt(index: 0, value: true)
-
-        let firstTrue = expectedResultFirstTrue.equalsTo(series: s1 == 1)
-        XCTAssertTrue(firstTrue)
+        XCTAssertTrue(expectedResult.equalsTo(series: s1 <= s2))
+        XCTAssertTrue(expectedResult.equalsTo(series: s2 >= s1))
     }
 
-    func test_whenAllNotEqual_notEqualCompareToConstant() {
-        let first: Int = 1
-        let last: Int = 20
+    func test_equalityCompare() {
 
-        let arr = Array(first...last)
+        let s1: DataSeries<Int>? = DataSeries([1, 2, 3])
+        let s2: DataSeries<Int>? = DataSeries([2, 2, 2])
 
-        let s1: DataSeries<Int>? = DataSeries(arr)
+        let expectedResult = DataSeries([false, true, false])
 
-        let expectedResultTrue = DataSeries(repeating: false, count: arr.count)
-
-        let allZeros = expectedResultTrue.equalsTo(series: s1 != 0)
-        XCTAssertFalse(allZeros)
+        XCTAssertTrue(expectedResult.equalsTo(series: s1 == s2))
     }
 
-    func test_whenFirstEqual_notEqualCompareToConstant() {
-        let first: Int = 1
-        let last: Int = 20
+    func test_nonEqualityCompare() {
 
-        let arr = Array(first...last)
+        let s1: DataSeries<Int>? = DataSeries([1, 2, 3])
+        let s2: DataSeries<Int>? = DataSeries([2, 2, 2])
 
-        let s1: DataSeries<Int>? = DataSeries(arr)
+        let expectedResult = DataSeries([true, false, true])
 
-        let expectedResultFirstTrue = DataSeries(repeating: true, count: arr.count).setAt(index: 0, value: false)
-
-        let firstTrue = expectedResultFirstTrue.equalsTo(series: s1 != 1)
-        XCTAssertTrue(firstTrue)
+        XCTAssertTrue(expectedResult.equalsTo(series: s1 != s2))
     }
+
 }
