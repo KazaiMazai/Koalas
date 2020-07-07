@@ -372,7 +372,6 @@ final class DataFrameTests: XCTestCase {
         try fileManager.removeItem(at: fileURL)
     }
 
-
     func test_toDateComponents() {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy/MM/dd"
@@ -465,8 +464,6 @@ final class DataFrameTests: XCTestCase {
         XCTAssertTrue(df1.equalsTo(dataframe: df2, with: 0.000001))
     }
 
-
-    
     func test_whenDFNotEqual_equalsToReturnsFalse() {
 
         let first: Double = 1
@@ -498,4 +495,118 @@ final class DataFrameTests: XCTestCase {
         XCTAssertFalse(df1.equalsTo(dataframe: df2))
     }
 
+    func test_strictCompare() {
+        let s1 = DataSeries([1, 2, 3])
+        let s2 = DataSeries([2, 2, 2])
+
+        let df1: DataFrame<String, Int>? = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
+        let df2: DataFrame<String, Int>? = DataFrame(dictionaryLiteral: ("1", s2), ("2", s1))
+
+        let expectedResult = DataFrame(dictionaryLiteral:
+            ("1", DataSeries([true, false, false])),
+                                       ("2", DataSeries([false, false, true])))
+
+        XCTAssertTrue(expectedResult.equalsTo(dataframe: df1 < df2))
+        XCTAssertTrue(expectedResult.equalsTo(dataframe: df2 > df1))
+    }
+
+    func test_nonStrictCompare() {
+        let s1 = DataSeries([1, 2, 3])
+        let s2 = DataSeries([2, 2, 2])
+
+        let df1: DataFrame<String, Int>? = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
+        let df2: DataFrame<String, Int>? = DataFrame(dictionaryLiteral: ("1", s2), ("2", s1))
+
+        let expectedResult = DataFrame(dictionaryLiteral:
+            ("1", DataSeries([true, true, false])),
+                                       ("2", DataSeries([false, true, true])))
+
+        XCTAssertTrue(expectedResult.equalsTo(dataframe: df1 <= df2))
+        XCTAssertTrue(expectedResult.equalsTo(dataframe: df2 >= df1))
+    }
+
+    func test_equalityCompare() {
+        let s1 = DataSeries([1, 2, 3])
+        let s2 = DataSeries([2, 2, 2])
+
+        let df1: DataFrame<String, Int>? = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
+        let df2: DataFrame<String, Int>? = DataFrame(dictionaryLiteral: ("1", s2), ("2", s1))
+
+        let expectedResult = DataFrame(dictionaryLiteral:
+            ("1", DataSeries([false, true, false])),
+                                       ("2", DataSeries([false, true, false])))
+
+        XCTAssertTrue(expectedResult.equalsTo(dataframe: df1 == df2))
+    }
+
+    func test_nonEqualityCompare() {
+        let s1 = DataSeries([1, 2, 3])
+        let s2 = DataSeries([2, 2, 2])
+
+        let df1: DataFrame<String, Int>? = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
+        let df2: DataFrame<String, Int>? = DataFrame(dictionaryLiteral: ("1", s2), ("2", s1))
+
+        let expectedResult = DataFrame(dictionaryLiteral:
+            ("1", DataSeries([true, false, true])),
+                                       ("2", DataSeries([true, false, true])))
+
+        XCTAssertTrue(expectedResult.equalsTo(dataframe: df1 != df2))
+    }
+
+    func test_strictCompareToConst() {
+        let s1 = DataSeries([1, 2, 3])
+        let s2 = DataSeries([2, 2, 2])
+
+        let df1: DataFrame<String, Int>? = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
+        let df2Const = 2
+
+        let expectedResult1 = DataFrame(dictionaryLiteral:
+            ("1", DataSeries([true, false, false])),
+                                        ("2", DataSeries([false, false, false])))
+
+        let expectedResult2 = DataFrame(dictionaryLiteral:
+            ("1", DataSeries([false, false, true])),
+                                        ("2", DataSeries([false, false, false])))
+
+        XCTAssertTrue(expectedResult1.equalsTo(dataframe: df1 < df2Const))
+        XCTAssertTrue(expectedResult2.equalsTo(dataframe: df1 > df2Const))
+    }
+
+    func test_nonStrictCompareToConst() {
+        let s1 = DataSeries([1, 2, 3])
+        let s2 = DataSeries([2, 2, 2])
+
+        let df1: DataFrame<String, Int>? = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
+        let df2Const = 2
+
+        let expectedResult1 = DataFrame(dictionaryLiteral:
+            ("1", DataSeries([true, true, false])),
+                                        ("2", DataSeries([true, true, true])))
+
+        let expectedResult2 = DataFrame(dictionaryLiteral:
+            ("1", DataSeries([false, true, true])),
+                                        ("2", DataSeries([true, true, true])))
+
+        XCTAssertTrue(expectedResult1.equalsTo(dataframe: df1 <= df2Const))
+        XCTAssertTrue(expectedResult2.equalsTo(dataframe: df1 >= df2Const))
+    }
+
+    func test_equalityCompareToConst() {
+        let s1 = DataSeries([1, 2, 3])
+        let s2 = DataSeries([2, 2, 2])
+
+        let df1: DataFrame<String, Int>? = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
+        let df2Const = 2
+
+        let expectedResult1 = DataFrame(dictionaryLiteral:
+            ("1", DataSeries([false, true, false])),
+                                        ("2", DataSeries([true, true, true])))
+
+        let expectedResult2 = DataFrame(dictionaryLiteral:
+            ("1", DataSeries([true, false, true])),
+                                        ("2", DataSeries([false, false, false])))
+
+        XCTAssertTrue(expectedResult1.equalsTo(dataframe: df1 == df2Const))
+        XCTAssertTrue(expectedResult2.equalsTo(dataframe: df1 != df2Const))
+    }
 }

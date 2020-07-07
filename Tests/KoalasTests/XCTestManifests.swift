@@ -1,1 +1,9 @@
-fatalError("Running tests like this is unsupported. Run the tests again by using `swift test --enable-test-discovery`")
+import XCTest
+
+#if !canImport(ObjectiveC)
+public func allTests() -> [XCTestCaseEntry] {
+    return [
+        testCase([]),
+    ]
+}
+#endif

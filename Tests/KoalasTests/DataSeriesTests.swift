@@ -513,4 +513,94 @@ final class DataSeriesTests: XCTestCase {
 
         XCTAssertFalse(s1.equalsTo(series: s2))
     }
+
+
+
+
+    func test_strictCompareToConst() {
+
+        let s1: DataSeries<Int>? = DataSeries([1, 2, 3])
+        let constToCompare = 2
+
+        let expectedResult1 = DataSeries([true, false, false])
+        let expectedResult2 = DataSeries([false, false, true])
+
+        XCTAssertTrue(expectedResult1.equalsTo(series: s1 < constToCompare))
+        XCTAssertTrue(expectedResult2.equalsTo(series: s1 > constToCompare))
+    }
+
+
+    func test_nonStrictCompareToConst() {
+
+        let s1: DataSeries<Int>? = DataSeries([1, 2, 3])
+        let constToCompare = 2
+
+        let expectedResult1 = DataSeries([true, true, false])
+        let expectedResult2 = DataSeries([false, true, true])
+
+        XCTAssertTrue(expectedResult1.equalsTo(series: s1 <= constToCompare))
+        XCTAssertTrue(expectedResult2.equalsTo(series: s1 >= constToCompare))
+    }
+
+    func test_equalityCompareToConst() {
+        let s1: DataSeries<Int>? = DataSeries([1, 2, 3])
+        let constToCompare = 2
+
+        let expectedResult = DataSeries([false, true, false])
+
+        XCTAssertTrue(expectedResult.equalsTo(series: s1 == constToCompare))
+    }
+
+    func test_nonEqualityCompareToConst() {
+
+        let s1: DataSeries<Int>? = DataSeries([1, 2, 3])
+        let constToCompare = 2
+
+        let expectedResult = DataSeries([true, false, true])
+
+        XCTAssertTrue(expectedResult.equalsTo(series: s1 != constToCompare))
+    }
+
+    func test_strictCompare() {
+
+        let s1: DataSeries<Int>? = DataSeries([1, 2, 3])
+        let s2: DataSeries<Int>? = DataSeries([2, 2, 2])
+
+        let expectedResult = DataSeries([true, false, false])
+
+        XCTAssertTrue(expectedResult.equalsTo(series: s1 < s2))
+        XCTAssertTrue(expectedResult.equalsTo(series: s2 > s1))
+    }
+
+    func test_nonStrictCompare() {
+
+        let s1: DataSeries<Int>? = DataSeries([1, 2, 3])
+        let s2: DataSeries<Int>? = DataSeries([2, 2, 2])
+
+        let expectedResult = DataSeries([true, true, false])
+
+        XCTAssertTrue(expectedResult.equalsTo(series: s1 <= s2))
+        XCTAssertTrue(expectedResult.equalsTo(series: s2 >= s1))
+    }
+
+    func test_equalityCompare() {
+
+        let s1: DataSeries<Int>? = DataSeries([1, 2, 3])
+        let s2: DataSeries<Int>? = DataSeries([2, 2, 2])
+
+        let expectedResult = DataSeries([false, true, false])
+
+        XCTAssertTrue(expectedResult.equalsTo(series: s1 == s2))
+    }
+
+    func test_nonEqualityCompare() {
+
+        let s1: DataSeries<Int>? = DataSeries([1, 2, 3])
+        let s2: DataSeries<Int>? = DataSeries([2, 2, 2])
+
+        let expectedResult = DataSeries([true, false, true])
+
+        XCTAssertTrue(expectedResult.equalsTo(series: s1 != s2))
+    }
+
 }

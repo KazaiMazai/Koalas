@@ -7,6 +7,7 @@
 
 import Foundation
 
+
 public func + <T>(lhs: DataSeries<T>?, rhs: DataSeries<T>?) -> DataSeries<T>?  where T: Numeric {
     unwrap(lhs, rhs) { $0 + $1 }
 }
@@ -31,31 +32,51 @@ public func == <T>(lhs: DataSeries<T>?, rhs: DataSeries<T>?) -> DataSeries<Bool>
     unwrap(lhs, rhs) { $0 == $1 }
 }
 
+public func == <T>(lhs: DataSeries<T>?, rhs: T?) -> DataSeries<Bool>?  where T: Comparable {
+    unwrap(lhs, rhs) { $0 == $1 }
+}
+
+public func != <T>(lhs: DataSeries<T>?, rhs: T?) -> DataSeries<Bool>?  where T: Comparable {
+    unwrap(lhs, rhs) { $0 != $1 }
+}
+
+public func < <T>(lhs: DataSeries<T>?, rhs: DataSeries<T>?) -> DataSeries<Bool>?  where T: Comparable {
+    unwrap(lhs, rhs) { $0 < $1 }
+}
+
+public func <= <T>(lhs: DataSeries<T>?, rhs: DataSeries<T>?) -> DataSeries<Bool>?  where T: Comparable {
+   unwrap(lhs, rhs) { $0 <= $1 }
+}
+
+public func > <T>(lhs: DataSeries<T>?, rhs: DataSeries<T>?) -> DataSeries<Bool>?  where T: Comparable {
+    unwrap(lhs, rhs) { $0 > $1 }
+}
+
+public func >= <T>(lhs: DataSeries<T>?, rhs: DataSeries<T>?) -> DataSeries<Bool>?  where T: Comparable {
+    unwrap(lhs, rhs) { $0 >= $1 }
+}
+
+public func < <T>(lhs: DataSeries<T>?, rhs: T?) -> DataSeries<Bool>?  where T: Comparable {
+    unwrap(lhs, rhs) { $0 < $1 }
+}
+
+public func <= <T>(lhs: DataSeries<T>?, rhs: T?) -> DataSeries<Bool>?  where T: Comparable {
+   unwrap(lhs, rhs) { $0 <= $1 }
+}
+
+public func > <T>(lhs: DataSeries<T>?, rhs: T?) -> DataSeries<Bool>?  where T: Comparable {
+    unwrap(lhs, rhs) { $0 > $1 }
+}
+
+public func >= <T>(lhs: DataSeries<T>?, rhs: T?) -> DataSeries<Bool>?  where T: Comparable {
+    unwrap(lhs, rhs) { $0 >= $1 }
+}
+
 public func + <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>  where T: Numeric {
     assert(lhs.count == rhs.count, "Dataseries should have equal length")
 
     let res = zip(lhs, rhs).map {
         unwrap($0.0, $0.1) { $0 + $1 }
-    }
-
-    return DataSeries(res)
-}
-
-public func != <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<Bool>  where T: Equatable {
-    assert(lhs.count == rhs.count, "Dataseries should have equal length")
-
-    let res = zip(lhs, rhs).map {
-        unwrap($0.0, $0.1) { $0 != $1 }
-    }
-
-    return DataSeries(res)
-}
-
-public func == <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<Bool>  where T: Equatable {
-    assert(lhs.count == rhs.count, "Dataseries should have equal length")
-
-    let res = zip(lhs, rhs).map {
-        unwrap($0.0, $0.1) { $0 == $1 }
     }
 
     return DataSeries(res)
@@ -89,4 +110,89 @@ public func / <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>  wher
     }
 
     return DataSeries(res)
+}
+
+
+public func < <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<Bool>  where T: Comparable {
+    assert(lhs.count == rhs.count, "Dataseries should have equal length")
+
+    let res = zip(lhs, rhs).map {
+        unwrap($0.0, $0.1) { $0 < $1 }
+    }
+
+    return DataSeries(res)
+}
+
+public func <= <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<Bool>  where T: Comparable {
+    assert(lhs.count == rhs.count, "Dataseries should have equal length")
+
+    let res = zip(lhs, rhs).map {
+        unwrap($0.0, $0.1) { $0 <= $1 }
+    }
+
+    return DataSeries(res)
+}
+
+public func > <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<Bool>  where T: Comparable {
+    assert(lhs.count == rhs.count, "Dataseries should have equal length")
+
+    let res = zip(lhs, rhs).map {
+        unwrap($0.0, $0.1) { $0 > $1 }
+    }
+
+    return DataSeries(res)
+}
+
+public func >= <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<Bool>  where T: Comparable {
+    assert(lhs.count == rhs.count, "Dataseries should have equal length")
+
+    let res = zip(lhs, rhs).map {
+        unwrap($0.0, $0.1) { $0 >= $1 }
+    }
+
+    return DataSeries(res)
+}
+
+public func != <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<Bool>  where T: Equatable {
+    assert(lhs.count == rhs.count, "Dataseries should have equal length")
+
+    let res = zip(lhs, rhs).map {
+        unwrap($0.0, $0.1) { $0 != $1 }
+    }
+
+    return DataSeries(res)
+}
+
+public func == <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<Bool>  where T: Equatable {
+    assert(lhs.count == rhs.count, "Dataseries should have equal length")
+
+    let res = zip(lhs, rhs).map {
+        unwrap($0.0, $0.1) { $0 == $1 }
+    }
+
+    return DataSeries(res)
+}
+
+public func == <T>(lhs: DataSeries<T>, rhs: T) -> DataSeries<Bool>  where T: Comparable {
+    return lhs == lhs.mapTo(constant: rhs)
+}
+
+public func != <T>(lhs: DataSeries<T>, rhs: T) -> DataSeries<Bool>  where T: Comparable {
+    return lhs != lhs.mapTo(constant: rhs)
+}
+
+public func < <T>(lhs: DataSeries<T>, rhs: T) -> DataSeries<Bool>  where T: Comparable {
+    return lhs < lhs.mapTo(constant: rhs)
+}
+
+public func <= <T>(lhs: DataSeries<T>, rhs: T) -> DataSeries<Bool>  where T: Comparable {
+    return lhs <= lhs.mapTo(constant: rhs)
+}
+
+public func > <T>(lhs: DataSeries<T>, rhs: T) -> DataSeries<Bool>  where T: Comparable {
+    return lhs > lhs.mapTo(constant: rhs)
+}
+
+public func >= <T>(lhs: DataSeries<T>, rhs: T) -> DataSeries<Bool>  where T: Comparable {
+    return lhs >= lhs.mapTo(constant: rhs)
 }
