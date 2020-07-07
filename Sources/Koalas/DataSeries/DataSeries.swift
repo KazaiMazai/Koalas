@@ -25,7 +25,7 @@ public func whereCondition<U>(_ condition: DataSeries<Bool>?,
         return nil
     }
 
-    whereCondition(condition, then: trueDS, else: falseDS)
+    return whereCondition(condition, then: trueDS, else: falseDS)
 }
 
 public func whereCondition<U>(_ condition: DataSeries<Bool>?, then trueSeries: DataSeries<U>?, else series: DataSeries<U>?) -> DataSeries<U>?   {
