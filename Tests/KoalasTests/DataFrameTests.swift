@@ -499,8 +499,8 @@ final class DataFrameTests: XCTestCase {
         let s1 = DataSeries([1, 2, 3])
         let s2 = DataSeries([2, 2, 2])
 
-        let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
-        let df2 = DataFrame(dictionaryLiteral: ("1", s2), ("2", s1))
+        let df1: DataFrame<String, Int>? = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
+        let df2: DataFrame<String, Int>? = DataFrame(dictionaryLiteral: ("1", s2), ("2", s1))
 
         let expectedResult = DataFrame(dictionaryLiteral:
             ("1", DataSeries([true, false, false])),
@@ -514,8 +514,8 @@ final class DataFrameTests: XCTestCase {
         let s1 = DataSeries([1, 2, 3])
         let s2 = DataSeries([2, 2, 2])
 
-        let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
-        let df2 = DataFrame(dictionaryLiteral: ("1", s2), ("2", s1))
+        let df1: DataFrame<String, Int>? = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
+        let df2: DataFrame<String, Int>? = DataFrame(dictionaryLiteral: ("1", s2), ("2", s1))
 
         let expectedResult = DataFrame(dictionaryLiteral:
             ("1", DataSeries([true, true, false])),
@@ -529,8 +529,8 @@ final class DataFrameTests: XCTestCase {
         let s1 = DataSeries([1, 2, 3])
         let s2 = DataSeries([2, 2, 2])
 
-        let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
-        let df2 = DataFrame(dictionaryLiteral: ("1", s2), ("2", s1))
+        let df1: DataFrame<String, Int>? = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
+        let df2: DataFrame<String, Int>? = DataFrame(dictionaryLiteral: ("1", s2), ("2", s1))
 
         let expectedResult = DataFrame(dictionaryLiteral:
             ("1", DataSeries([false, true, false])),
@@ -543,8 +543,8 @@ final class DataFrameTests: XCTestCase {
         let s1 = DataSeries([1, 2, 3])
         let s2 = DataSeries([2, 2, 2])
 
-        let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
-        let df2 = DataFrame(dictionaryLiteral: ("1", s2), ("2", s1))
+        let df1: DataFrame<String, Int>? = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
+        let df2: DataFrame<String, Int>? = DataFrame(dictionaryLiteral: ("1", s2), ("2", s1))
 
         let expectedResult = DataFrame(dictionaryLiteral:
             ("1", DataSeries([true, false, true])),
@@ -557,7 +557,7 @@ final class DataFrameTests: XCTestCase {
         let s1 = DataSeries([1, 2, 3])
         let s2 = DataSeries([2, 2, 2])
 
-        let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
+        let df1: DataFrame<String, Int>? = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
         let df2Const = 2
 
         let expectedResult1 = DataFrame(dictionaryLiteral:
@@ -576,7 +576,7 @@ final class DataFrameTests: XCTestCase {
         let s1 = DataSeries([1, 2, 3])
         let s2 = DataSeries([2, 2, 2])
 
-        let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
+        let df1: DataFrame<String, Int>? = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
         let df2Const = 2
 
         let expectedResult1 = DataFrame(dictionaryLiteral:
@@ -595,7 +595,7 @@ final class DataFrameTests: XCTestCase {
         let s1 = DataSeries([1, 2, 3])
         let s2 = DataSeries([2, 2, 2])
 
-        let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
+        let df1: DataFrame<String, Int>? = DataFrame(dictionaryLiteral: ("1", s1), ("2", s2))
         let df2Const = 2
 
         let expectedResult1 = DataFrame(dictionaryLiteral:
