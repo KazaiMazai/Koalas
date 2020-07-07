@@ -9,6 +9,25 @@ import Foundation
 
 public typealias DataSeries<T: Codable> = SeriesArray<T?>
 
+public func whereCondition<U>(_ condition: DataSeries<Bool>?,
+                              then trueSeries: DataSeriesType<DataSeries<U>, U>,
+                              else series: DataSeriesType<DataSeries<U>, U>) -> DataSeries<U>? {
+
+    guard let condition = condition else {
+        return nil
+    }
+
+    guard let trueDS = trueSeries.toDataSeriesWithShape(of: condition) else {
+        return nil
+    }
+
+    guard let falseDS = series.toDataSeriesWithShape(of: condition) else {
+        return nil
+    }
+
+    return whereCondition(condition, then: trueDS, else: falseDS)
+}
+
 public func whereCondition<U>(_ condition: DataSeries<Bool>?, then trueSeries: DataSeries<U>?, else series: DataSeries<U>?) -> DataSeries<U>?   {
     return condition?.whereTrue(then: trueSeries, else: series)
 }
