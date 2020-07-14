@@ -58,6 +58,24 @@ public func zipSeries<T1, T2, T3>(_ s1: DataSeries<T1>?, _ s2: DataSeries<T2>?, 
     return DataSeries(result)
 }
 
+public func zipSeries<T1, T2, T3, T4>(_ s1: DataSeries<T1>?, _ s2: DataSeries<T2>?, _ s3: DataSeries<T3>?, _ s4: DataSeries<T4>?) -> DataSeries<Tuple4<T1?, T2?, T3?, T4?>>? {
+    guard let s1 = s1,
+        let s2 = s2,
+        let s3 = s3,
+        let s4 = s4
+    else {
+        return nil
+    }
+
+    assert(s1.count == s2.count, "Dataseries should have equal length")
+    assert(s1.count == s3.count, "Dataseries should have equal length")
+    assert(s1.count == s4.count, "Dataseries should have equal length")
+
+
+    let result = zip(zip(s1, s2), zip(s3, s4)).map { Tuple4(t1: $0.0.0, t2: $0.0.1, t3: $0.1.0, t4: $0.1.1) }
+    return DataSeries(result)
+}
+
 public func zipSeries<T1, T2>(_ s1: DataSeries<T1>?, _ s2: DataSeries<T2>?) -> DataSeries<Tuple2<T1?, T2?>>? {
     guard let s1 = s1,
         let s2 = s2
