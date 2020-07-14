@@ -45,7 +45,7 @@ public func < <T>(lhs: DataSeries<T>?, rhs: DataSeries<T>?) -> DataSeries<Bool>?
 }
 
 public func <= <T>(lhs: DataSeries<T>?, rhs: DataSeries<T>?) -> DataSeries<Bool>?  where T: Comparable {
-   unwrap(lhs, rhs) { $0 <= $1 }
+    unwrap(lhs, rhs) { $0 <= $1 }
 }
 
 public func > <T>(lhs: DataSeries<T>?, rhs: DataSeries<T>?) -> DataSeries<Bool>?  where T: Comparable {
@@ -61,7 +61,7 @@ public func < <T>(lhs: DataSeries<T>?, rhs: T?) -> DataSeries<Bool>?  where T: C
 }
 
 public func <= <T>(lhs: DataSeries<T>?, rhs: T?) -> DataSeries<Bool>?  where T: Comparable {
-   unwrap(lhs, rhs) { $0 <= $1 }
+    unwrap(lhs, rhs) { $0 <= $1 }
 }
 
 public func > <T>(lhs: DataSeries<T>?, rhs: T?) -> DataSeries<Bool>?  where T: Comparable {
@@ -70,6 +70,14 @@ public func > <T>(lhs: DataSeries<T>?, rhs: T?) -> DataSeries<Bool>?  where T: C
 
 public func >= <T>(lhs: DataSeries<T>?, rhs: T?) -> DataSeries<Bool>?  where T: Comparable {
     unwrap(lhs, rhs) { $0 >= $1 }
+}
+
+public func && (lhs: DataSeries<Bool>?, rhs: DataSeries<Bool>?) -> DataSeries<Bool>? {
+    unwrap(lhs, rhs) { $0 && $1 }
+}
+
+public func || (lhs: DataSeries<Bool>?, rhs: DataSeries<Bool>?) -> DataSeries<Bool>? {
+    unwrap(lhs, rhs) { $0 || $1 }
 }
 
 public func + <T>(lhs: DataSeries<T>, rhs: DataSeries<T>) -> DataSeries<T>  where T: Numeric {
@@ -227,4 +235,26 @@ public func * <T>(lhs: DataSeries<T>?, rhs: T?) -> DataSeries<T>? where T: Numer
 
 public func / <T>(lhs: DataSeries<T>?, rhs: T?) -> DataSeries<T>? where T: FloatingPoint {
     unwrap(lhs, rhs) { $0 / $1 }
+}
+
+
+
+public func && (lhs: DataSeries<Bool>, rhs: DataSeries<Bool>) -> DataSeries<Bool> {
+    assert(lhs.count == rhs.count, "Dataseries should have equal length")
+
+    let res = zip(lhs, rhs).map {
+        unwrap($0.0, $0.1) { $0 && $1 }
+    }
+
+    return DataSeries(res)
+}
+
+public func || (lhs: DataSeries<Bool>, rhs: DataSeries<Bool>) -> DataSeries<Bool> {
+    assert(lhs.count == rhs.count, "Dataseries should have equal length")
+
+    let res = zip(lhs, rhs).map {
+        unwrap($0.0, $0.1) { $0 || $1 }
+    }
+
+    return DataSeries(res)
 }
