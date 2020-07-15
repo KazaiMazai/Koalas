@@ -80,6 +80,26 @@ final class DataSeriesTests: XCTestCase {
         }
     }
 
+    func test_expandingMax() {
+        let s1 = DataSeries([nil, nil, 2, 3 ,1 ,0 ,1, 4, 3])
+        let result = s1.expandingMax()
+
+        XCTAssertEqual(s1.count, result.count)
+
+        let expectedResult = DataSeries([nil, nil, 2, 3 ,3 ,3 ,3, 4, 4])
+        XCTAssertTrue(result.equalsTo(series: expectedResult))
+    }
+
+    func test_expandingMin() {
+        let s1 = DataSeries([nil, nil, 2, 3 ,1 ,0 ,1, 4, 3])
+        let result = s1.expandingMin()
+
+        XCTAssertEqual(s1.count, result.count)
+
+        let expectedResult = DataSeries([nil, nil, 2, 2 ,1 ,0 ,0, 0, 0])
+        XCTAssertTrue(result.equalsTo(series: expectedResult))
+    }
+
     func test_expandingSumWithNilAndInitialNonZero() {
         let s1 = DataSeries([nil, 1, nil ,nil ,nil ,nil, 1, 1])
         let expandingSum = s1.expandingSum(initial: 1)
@@ -468,6 +488,19 @@ final class DataSeriesTests: XCTestCase {
 
         let s1 = DataSeries(arr)
         let s2 = DataSeries(arr)
+
+        XCTAssertTrue(s1.equalsTo(series: s2))
+    }
+
+    func test_whenSeriesEqualAndContainNil_equalToReturnsTrue() {
+
+        let first: Int = 1
+        let last: Int = 20
+
+        let arr = Array(first...last)
+
+        let s1 = DataSeries([nil, nil, 1, 2, 3])
+        let s2 = DataSeries([nil, nil, 1, 2, 3])
 
         XCTAssertTrue(s1.equalsTo(series: s2))
     }

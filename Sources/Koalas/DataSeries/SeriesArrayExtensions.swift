@@ -32,7 +32,7 @@ public extension SeriesArray {
             return false
         }
 
-        return zip(self, series).first { !isElementEqual(lhs: $0.0, rhs: $0.1) }  == nil
+        return zip(self, series).first { !isElementEqual(lhs: $0.0, rhs: $0.1) } == nil
     }
 
     func equalsTo<T>(series: DataSeries<T>?, with precision: T) -> Bool where Element == T?, T: FloatingPoint {
@@ -139,6 +139,40 @@ public extension SeriesArray {
 
     func expandingSum<T>(initial: T) -> DataSeries<T> where Element == T?, T: Numeric {
         let res = scan(initial: initial) {  $0 + ($1 ?? 0) }
+        return DataSeries(res)
+    }
+
+    func expandingMax<T>() -> DataSeries<T> where Element == T?, T: Comparable {
+        let res = scan(initial: first ?? nil) { current, next in
+            guard let next = next else {
+                return current
+            }
+
+            guard let current = current else {
+                return next
+            }
+
+            return Swift.max(current, next)
+
+        }
+
+        return DataSeries(res)
+    }
+
+    func expandingMin<T>() -> DataSeries<T> where Element == T?, T: Comparable {
+        let res = scan(initial: first ?? nil) { current, next in
+            guard let next = next else {
+                return current
+            }
+
+            guard let current = current else {
+                return next
+            }
+
+            return Swift.min(current, next)
+
+        }
+
         return DataSeries(res)
     }
 

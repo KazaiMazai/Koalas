@@ -261,6 +261,34 @@ final class DataFrameTests: XCTestCase {
         }
     }
 
+    func test_expandingMax() {
+        let s1 = DataSeries([nil, nil, 2, 3 ,1 ,0 ,1, 4, 3])
+
+        let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s1))
+        let result = df1.expandingMax()
+
+        let expectedResultSeries = DataSeries([nil, nil, 2, 3 ,3 ,3 ,3, 4, 4])
+
+        let expectedResult = DataFrame(dictionaryLiteral: ("1", expectedResultSeries),
+                                       ("2", expectedResultSeries))
+
+        XCTAssertTrue(result.equalsTo(dataframe: expectedResult))
+    }
+
+    func test_expandingMin() {
+        let s1 = DataSeries([nil, nil, 2, 3 ,1 ,0 ,1, 4, 3])
+
+        let df1 = DataFrame(dictionaryLiteral: ("1", s1), ("2", s1))
+        let result = df1.expandingMin()
+
+        let expectedResultSeries = DataSeries([nil, nil, 2, 2 ,1 ,0 ,0, 0, 0])
+
+        let expectedResult = DataFrame(dictionaryLiteral: ("1", expectedResultSeries),
+                                       ("2", expectedResultSeries))
+
+        XCTAssertTrue(result.equalsTo(dataframe: expectedResult))
+    }
+
     func test_scanFunc() {
         let first: Int = 1
         let last: Int = 20
