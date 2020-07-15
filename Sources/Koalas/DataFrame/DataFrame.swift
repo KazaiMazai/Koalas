@@ -65,6 +65,14 @@ public extension DataFrame {
         return mapValues { $0.expandingSum(initial: initial) }
     }
 
+    func expandingMax<V>() -> DataFrame<Key, V> where Value == DataSeries<V>, V: Comparable {
+        return mapValues { $0.expandingMax() }
+    }
+
+    func expandingMin<V>() -> DataFrame<Key, V> where Value == DataSeries<V>, V: Comparable {
+        return mapValues { $0.expandingMin() }
+    }
+
     func rollingFunc<V>(initial: V, window: Int, windowFunc: (([V?]) -> V?)) -> DataFrame<Key, V> where Value == DataSeries<V>, V: Numeric  {
         return mapValues { $0.rollingFunc(initial: initial, window: window, windowFunc: windowFunc)}
     }
