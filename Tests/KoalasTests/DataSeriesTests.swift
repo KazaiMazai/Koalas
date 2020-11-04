@@ -636,4 +636,13 @@ final class DataSeriesTests: XCTestCase {
         XCTAssertTrue(expectedResult.equalsTo(series: s1 != s2))
     }
 
+    func test_isEmptySeries() {
+        let s1: DataSeries<Int> = DataSeries([nil, nil, nil])
+        let s2: DataSeries<Int> = DataSeries([1, 2, nil])
+        let s3: DataSeries<Int> = DataSeries([1, 2, 3])
+
+        XCTAssertTrue(s1.isEmptySeries())
+        XCTAssertFalse(s2.isEmptySeries())
+        XCTAssertFalse(s3.isEmptySeries())
+    }
 }

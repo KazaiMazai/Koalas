@@ -23,6 +23,14 @@ public extension SeriesArray  {
 }
 
 public extension SeriesArray {
+    func isEmptySeries<T>() -> Bool where Element == T?, T: Equatable {
+        guard let firstNonNil = first(where: { $0 != nil }) else {
+            return true
+        }
+
+        return firstNonNil == nil
+    }
+
     func equalsTo<T>(series: DataSeries<T>?) -> Bool where Element == T?, T: Equatable {
         guard let series = series else {
             return false
