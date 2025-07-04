@@ -7,6 +7,10 @@
 
 import Foundation
 
+/**
+ A dictionary-like structure that maps keys to DataSeries.
+ Used to store and manipulate 2D tabular data with multiple columns (DataSeries).
+ */
 public typealias DataFrame<K: Hashable, V: Codable> = Dictionary<K, DataSeries<V>>
 
 public extension DataFrame {

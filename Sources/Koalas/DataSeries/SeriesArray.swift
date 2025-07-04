@@ -7,6 +7,12 @@
 
 import Foundation
 
+/**
+ A generic array structure that conforms to RangeReplaceableCollection and Codable.
+ Serves as the underlying data structure for DataSeries, providing a type-safe,
+ serializable collection that supports all standard array operations including
+ filtering, insertion, removal, and range replacement.
+ */
 public struct SeriesArray<T: Codable>: RangeReplaceableCollection, Codable {
 
     public typealias Element = T
