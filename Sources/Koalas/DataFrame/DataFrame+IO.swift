@@ -8,6 +8,11 @@
 import Foundation
 
 extension DataFrame {
+    /**
+     Converts the DataFrame to an array of string lines representing the data in tabular format.
+     The first line contains column headers (keys), followed by data rows.
+     Each row is joined with the specified separator.
+     */
     public func toStringRowLines<V>(separator: String) -> [String] where Value == DataSeries<V>, V: LosslessStringConvertible, Key: LosslessStringConvertible {
         var resultStringLines: [String] = []
         let sortedKeys = keys.sorted { return String($0) < String($1) }
@@ -25,6 +30,10 @@ extension DataFrame {
         return resultStringLines
     }
 
+    /**
+     Writes the DataFrame to a file in CSV-like format.
+     Uses the specified column separator and encoding for the output file.
+     */
     public func write<V>(toFile: String,
                          atomically: Bool = true,
                          encoding: String.Encoding = .utf8,
@@ -39,9 +48,15 @@ extension DataFrame {
             try dataframeString.write(toFile: toFile, atomically: atomically, encoding: encoding)
     }
 
-    public init<V>(contentsOfFile file: String,
-               encoding: String.Encoding = .utf8,
-               columnSeparator: String) throws
+    /**
+     Initializes a DataFrame from a file containing tabular data.
+     The first line is expected to contain column headers, followed by data rows.
+     Uses the specified encoding and column separator to parse the file.
+     */
+    public init<V>(
+        contentsOfFile file: String,
+        encoding: String.Encoding = .utf8,
+        columnSeparator: String) throws
 
         where
         Value == DataSeries<V>,
@@ -52,9 +67,15 @@ extension DataFrame {
         self = try Self.read(from: file, encoding: encoding, columnSeparator: columnSeparator)
     }
 
-    fileprivate static func read<K, V>(from file: String,
-                                         encoding: String.Encoding = .utf8,
-                                         columnSeparator: String) throws -> DataFrame<K, V>
+    /**
+     Reads a DataFrame from a file and parses it according to the specified format.
+     Expects the first line to contain column headers and subsequent lines to contain data.
+     Returns a DataFrame with the parsed data structure.
+     */
+    fileprivate static func read<K, V>(
+        from file: String,
+        encoding: String.Encoding = .utf8,
+        columnSeparator: String) throws -> DataFrame<K, V>
 
         where
         Value == DataSeries<V>,
