@@ -4,7 +4,23 @@
   <img src="logo.svg?raw=true" alt="Koalas Logo" width="200"/>
 </p>
 
+[![Swift](https://img.shields.io/badge/Swift-5.2+-orange.svg)](https://swift.org)
+[![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20iOS-lightgrey.svg)](https://swift.org)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 A powerful Swift library for multidimensional data manipulation, inspired by Python's pandas. Koalas provides native Swift implementations of DataSeries, DataFrame, and DataPanel for efficient data analysis and manipulation.
+
+**Perfect for iOS/macOS apps that need data analysis capabilities without external dependencies.**
+
+## Table of Contents
+- [Features](#features)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Data Structures](#data-structures)
+- [Advanced Features](#advanced-features)
+- [Performance Considerations](#performance-considerations)
+- [Requirements](#requirements)
+- [License](#license)
 
 ## Features
 
@@ -28,6 +44,12 @@ Add Koalas to your project using Swift Package Manager:
 3. Select the version you want to use
 4. Click **Add Package**
 
+Or add it to your `Package.swift`:
+```swift
+dependencies: [
+    .package(url: "https://github.com/your-username/Koalas.git", from: "1.0.0")
+]
+```
 
 ```swift
 import Koalas
@@ -61,9 +83,10 @@ let product = df * constDf
 let quotient = df / constDf
 
 // Statistical operations
-let columnSums = df.columnSum()
-let means = df.mean()
-let stdDevs = df.std()
+let columnSums = df.columnSum()   
+let means = df.mean()   
+let stdDevs = df.std() 
+let sums = df.sum()
 
 // Expanding operations
 let expandingSums = df.expandingSum(initial: 0)
@@ -129,6 +152,43 @@ let importedDf = try DataFrame<String, Double>(
 let csvLines = df.toStringRowLines(separator: ",")
 ```
 
+## Usage Examples
+
+### Financial Data Analysis
+```swift
+// Calculate moving averages for stock prices
+let stockData = DataFrame(dictionaryLiteral:
+    ("price", DataSeries([100.0, 102.0, 98.0, 105.0, 103.0])),
+    ("volume", DataSeries([1000, 1200, 800, 1500, 1100]))
+)
+
+let movingAverage = stockData["price"]!.rollingMean(window: 3)
+```
+
+### Data Cleaning
+```swift
+// Clean dataset with missing values
+let rawData = DataFrame(dictionaryLiteral:
+    ("name", DataSeries(["Alice", "Bob", nil, "Charlie"])),
+    ("city", DataSeries(["NYC", nil, "LA", "Chicago"])),
+    ("status", DataSeries(["active", "inactive", nil, "active"]))
+)
+
+let cleanedData = rawData.fillNils(method: .forward(initial: "Unknown"))
+```
+
+### Working with Different Data Types
+```swift
+// For mixed data types, use separate DataFrames or zipSeries
+let names = DataSeries(["Alice", "Bob", "Charlie"])
+let ages = DataSeries([25, 30, 35])
+let scores = DataSeries([85, 92, 88])
+
+// Combine different types using zipSeries
+let combined = zipSeries(names, ages, scores)
+// Returns: DataSeries<Tuple3<String?, Int?, Int?>>
+```
+
 ## Data Structures
 
 ### DataSeries
@@ -161,12 +221,12 @@ let df = DataFrame(dictionaryLiteral:
     ("col2", DataSeries([4, 5, 6]))
 )
 
-// Access shape
+// Access shape - returns tuple
 let (width, height) = df.shape()
 
-// Column operations
-let columnSums = df.columnSum()
-let rowSums = df.sum()
+// Column operations - these return optional values
+let columnSums = df.columnSum() // Returns DataSeries<V>?
+let rowSums = df.sum() // Returns DataFrame<Key, V>
 ```
 
 ### DataPanel
@@ -238,6 +298,28 @@ let doubleDf = DataFrame(dictionaryLiteral:
 
 // Type-safe operations
 let result: DataFrame<String, Double> = intDf + doubleDf //Error
+```
+
+## Troubleshooting
+
+### Common Issues
+
+**Type conversion errors**
+```swift
+// ❌ This will fail
+let result = intDf + doubleDf
+
+// ✅ Use explicit type conversion
+let result = intDf.mapTo { Double($0) } + doubleDf
+```
+
+**Missing data handling**
+```swift
+// ❌ May cause issues with nil values
+let sum = series.sum()
+
+// ✅ Handle nil values explicitly
+let sum = series.compactMap { $0 }.reduce(0, +)
 ```
 
 ## Performance Considerations
