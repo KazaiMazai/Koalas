@@ -7,6 +7,11 @@
 
 import Foundation
 
+/**
+ A tuple structure containing two elements of different types.
+ Used for combining two DataSeries into a single series of paired values.
+ Both elements must conform to Codable for serialization support.
+ */
 public struct Tuple2<T1: Codable, T2: Codable>: Codable {
     public let t1: T1
     public let t2: T2
@@ -17,6 +22,11 @@ public struct Tuple2<T1: Codable, T2: Codable>: Codable {
     }
 }
 
+/**
+ A tuple structure containing three elements of different types.
+ Used for combining three DataSeries into a single series of grouped values.
+ All elements must conform to Codable for serialization support.
+ */
 public struct Tuple3<T1: Codable, T2: Codable, T3: Codable>: Codable {
     public let t1: T1
     public let t2: T2
@@ -29,6 +39,11 @@ public struct Tuple3<T1: Codable, T2: Codable, T3: Codable>: Codable {
     }
 }
 
+/**
+ A tuple structure containing four elements of different types.
+ Used for combining four DataSeries into a single series of grouped values.
+ All elements must conform to Codable for serialization support.
+ */
 public struct Tuple4<T1: Codable, T2: Codable, T3: Codable, T4: Codable>: Codable {
     public let t1: T1
     public let t2: T2

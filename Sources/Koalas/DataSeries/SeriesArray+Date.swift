@@ -7,6 +7,10 @@
 
 import Foundation
 
+/**
+ Defines the keys for date components when extracting parts of dates.
+ Used to organize date components (year, month, day) in a structured format.
+ */
 public enum DateComponentsKeys: String {
     case year
     case month
@@ -14,6 +18,11 @@ public enum DateComponentsKeys: String {
 }
 
 public extension SeriesArray where Element == Date? {
+    /**
+     Converts a SeriesArray of dates into a DataFrame containing individual date components.
+     Extracts year, month, and day from each date and organizes them into separate DataSeries.
+     Returns a DataFrame with three columns: year, month, and day, each containing integer values.
+     */
     func toDateComponents() -> DataFrame<DateComponentsKeys, Int> {
         let yearDateFormatter = DateFormatter()
         yearDateFormatter.dateFormat = "yyyy"

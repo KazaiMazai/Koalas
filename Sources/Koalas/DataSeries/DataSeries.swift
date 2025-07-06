@@ -7,8 +7,17 @@
 
 import Foundation
 
+/**
+ A SeriesArray of optional values that can be encoded and decoded using Codable.
+ Used to store and manipulate 1D tabular data with optional values.
+ */
 public typealias DataSeries<T: Codable> = SeriesArray<T?>
 
+/**
+ Applies a conditional operation to DataSeries based on a boolean condition.
+ Returns the true DataSeries where condition is true, false DataSeries where condition is false.
+ Handles DataSeriesType which can be either a DataSeries or a scalar value.
+ */
 public func whereCondition<U>(_ condition: DataSeries<Bool>?,
                               then trueSeries: DataSeriesType<DataSeries<U>, U>,
                               else series: DataSeriesType<DataSeries<U>, U>) -> DataSeries<U>? {
@@ -28,10 +37,18 @@ public func whereCondition<U>(_ condition: DataSeries<Bool>?,
     return whereCondition(condition, then: trueDS, else: falseDS)
 }
 
+/**
+ Applies a conditional operation to DataSeries based on a boolean condition.
+ Returns the true DataSeries where condition is true, false DataSeries where condition is false.
+ */
 public func whereCondition<U>(_ condition: DataSeries<Bool>?, then trueSeries: DataSeries<U>?, else series: DataSeries<U>?) -> DataSeries<U>?   {
     return condition?.whereTrue(then: trueSeries, else: series)
 }
 
+/**
+ Applies a conditional operation to DataSeries based on a boolean condition.
+ Returns a DataSeries with trueValue where condition is true, value where condition is false.
+ */
 public func whereCondition<U>(_ condition: DataSeries<Bool>?, then trueValue: U, else value: U) -> DataSeries<U>?   {
     guard let condition = condition else {
         return nil
@@ -43,6 +60,11 @@ public func whereCondition<U>(_ condition: DataSeries<Bool>?, then trueValue: U,
     return condition.whereTrue(then: trueSeries, else: falseSeries)
 }
 
+/**
+ Combines three DataSeries into a single DataSeries of tuples.
+ Returns nil if any of the input series are nil or have different lengths.
+ Each element in the result is a Tuple3 containing corresponding elements from the input series.
+ */
 public func zipSeries<T1, T2, T3>(_ s1: DataSeries<T1>?, _ s2: DataSeries<T2>?, _ s3: DataSeries<T3>?) -> DataSeries<Tuple3<T1?, T2?, T3?>>? {
     guard let s1 = s1,
         let s2 = s2,
@@ -58,6 +80,11 @@ public func zipSeries<T1, T2, T3>(_ s1: DataSeries<T1>?, _ s2: DataSeries<T2>?, 
     return DataSeries(result)
 }
 
+/**
+ Combines four DataSeries into a single DataSeries of tuples.
+ Returns nil if any of the input series are nil or have different lengths.
+ Each element in the result is a Tuple4 containing corresponding elements from the input series.
+ */
 public func zipSeries<T1, T2, T3, T4>(_ s1: DataSeries<T1>?, _ s2: DataSeries<T2>?, _ s3: DataSeries<T3>?, _ s4: DataSeries<T4>?) -> DataSeries<Tuple4<T1?, T2?, T3?, T4?>>? {
     guard let s1 = s1,
         let s2 = s2,
@@ -76,6 +103,11 @@ public func zipSeries<T1, T2, T3, T4>(_ s1: DataSeries<T1>?, _ s2: DataSeries<T2
     return DataSeries(result)
 }
 
+/**
+ Combines two DataSeries into a single DataSeries of tuples.
+ Returns nil if any of the input series are nil or have different lengths.
+ Each element in the result is a Tuple2 containing corresponding elements from the input series.
+ */
 public func zipSeries<T1, T2>(_ s1: DataSeries<T1>?, _ s2: DataSeries<T2>?) -> DataSeries<Tuple2<T1?, T2?>>? {
     guard let s1 = s1,
         let s2 = s2
