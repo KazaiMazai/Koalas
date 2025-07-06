@@ -1,7 +1,5 @@
-# Koalas
-
 <p align="left">
-  <img src="logo.svg?raw=true" alt="Koalas Logo" width="200"/>
+  <img src="logo.svg?raw=true" alt="Koalas Logo" width="300"/>
 </p>
 
 [![Swift](https://img.shields.io/badge/Swift-5.2+-orange.svg)](https://swift.org)
@@ -18,7 +16,6 @@ A powerful Swift library for multidimensional data manipulation, inspired by Pyt
 - [Quick Start](#quick-start)
 - [Data Structures](#data-structures)
 - [Advanced Features](#advanced-features)
-- [Performance Considerations](#performance-considerations)
 - [Requirements](#requirements)
 - [License](#license)
 
@@ -299,34 +296,6 @@ let doubleDf = DataFrame(dictionaryLiteral:
 // Type-safe operations
 let result: DataFrame<String, Double> = intDf + doubleDf //Error
 ```
-
-## Troubleshooting
-
-### Common Issues
-
-**Type conversion errors**
-```swift
-// ❌ This will fail
-let result = intDf + doubleDf
-
-// ✅ Use explicit type conversion
-let result = intDf.mapTo { Double($0) } + doubleDf
-```
-
-**Missing data handling**
-```swift
-// ❌ May cause issues with nil values
-let sum = series.sum()
-
-// ✅ Handle nil values explicitly
-let sum = series.compactMap { $0 }.reduce(0, +)
-```
-
-## Performance Considerations
-
-- **Memory Efficiency**: Built on Swift's native `Array` and `Dictionary` types
-- **Type Safety**: Compile-time type checking prevents runtime errors
-- **Generic Operations**: Efficient operations through Swift's generic system
 
 ## Requirements
 
