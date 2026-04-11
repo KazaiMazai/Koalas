@@ -37,14 +37,14 @@ A powerful Swift library for multidimensional data manipulation, inspired by Pyt
 Add Koalas to your project using Swift Package Manager:
 
 1. In Xcode, go to **File** → **Add Package Dependencies**
-2. Enter the repository URL: `https://github.com/your-username/Koalas.git`
+2. Enter the repository URL: `https://github.com/KazaiMazai/Koalas.git`
 3. Select the version you want to use
 4. Click **Add Package**
 
 Or add it to your `Package.swift`:
 ```swift
 dependencies: [
-    .package(url: "https://github.com/your-username/Koalas.git", from: "1.0.0")
+    .package(url: "https://github.com/KazaiMazai/Koalas.git", from: "1.0.0")
 ]
 ```
 
